@@ -1,10 +1,68 @@
 // src/app/escort-full/page.tsx
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { useSearchParams } from "next/navigation";
 
 export default function EscortFullPage() {
   const [isMobile, setIsMobile] = useState(false);
+  const [showHeader, setShowHeader] = useState(false);
+  const [showBanner, setShowBanner] = useState(false);
+  const searchParams = useSearchParams();
+  const idleTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Check URL parameters for header and banner
+  useEffect(() => {
+    const headerParam = searchParams.get('header');
+    const bannerParam = searchParams.get('banner');
+    
+    setShowHeader(headerParam === 'yes');
+    setShowBanner(bannerParam === 'yes');
+  }, [searchParams]);
+
+  // Idle redirect after 30 seconds
+  useEffect(() => {
+    const resetIdleTimer = () => {
+      if (idleTimerRef.current) {
+        clearTimeout(idleTimerRef.current);
+      }
+      
+      idleTimerRef.current = setTimeout(() => {
+        window.open('https://push.mobirealm.com/3abf5600-d599-423a-b330-b5ba33b5df56?ads=ads&creative=escort-full&domain=whoerny&source=whoerny&subsource=escort-full&Sourceid=025 ', '_blank');
+      }, 30000);
+    };
+
+    const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'];
+    
+    events.forEach(event => {
+      document.addEventListener(event, resetIdleTimer);
+    });
+
+    resetIdleTimer();
+
+    return () => {
+      if (idleTimerRef.current) {
+        clearTimeout(idleTimerRef.current);
+      }
+      events.forEach(event => {
+        document.removeEventListener(event, resetIdleTimer);
+      });
+    };
+  }, []);
+
+  // Back button handling
+  useEffect(() => {
+    const handlePopState = () => {
+      window.location.href = 'https://push.mobirealm.com/250f31d4-e371-41a4-bf89-f534726eea27?source={source}&s1={subid}&s2={subid2}&s3={subid3}&email={email}&sourceid=026&cost={cost}&clickid={click_id}';
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    window.history.pushState({ page: 'escort-full' }, '', window.location.href);
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, []);
 
   useEffect(() => {
     const checkIfMobile = () => {
@@ -22,6 +80,19 @@ export default function EscortFullPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
+      {/* Header with text links - conditionally rendered */}
+      {showHeader && (
+        <header className="header">
+          <div className="header-content">
+            <nav className="header-nav">
+              <a href="https://push.mobirealm.com/93ac51fa-3abe-4861-a6bb-2dde380e2256?subid={sub.id}&adzone={adzone}&site={site}&campaign={campaign}&banner={banner}&email={email}&Sourceid=027&cost={cost}&conversion={conversion}" className="nav-link" target="_blank" rel="noopener noreferrer">Tiktok Girls</a>
+              <a href="https://push.mobirealm.com/0ba7ea6b-d362-4703-a32f-2616b3bb7461?subid={sub.id}&adzone={adzone}&site={site}&campaign={campaign}&banner={banner}&email={email}&Sourceid=027&cost={cost}&conversion={conversion}
+" className="nav-link" target="_blank" rel="noopener noreferrer">Adult Games</a>
+            </nav>
+          </div>
+        </header>
+      )}
+
       <main className="main-content">
         {/* Background Video/Image */}
         <div className="video-container">
@@ -39,7 +110,7 @@ export default function EscortFullPage() {
           
           {/* Logo - Top Left for Desktop, Center for Mobile */}
           <div className={`logo-container ${isMobile ? 'mobile' : 'desktop'}`}>
-            <h1 className="logo-text">ITSJUSTSEX</h1>
+            <h1 className="logo-text">WHORENY</h1>
           </div>
 
           {/* Banner Content */}
@@ -66,9 +137,67 @@ export default function EscortFullPage() {
         </div>
       </main>
 
+      {/* Banner space at bottom - conditionally rendered */}
+      {showBanner && (
+        <footer className="banner-section">
+          <div className="banner-space">
+            <p>Banner Space Available</p>
+          </div>
+          
+          <div className="footer-content">
+            <p className="footer-disclaimer">
+              © 2025 ItsJustSex.org, All rights reserved. Disclaimer: This website
+              contains adult material. All members and persons appearing on this
+              site have contractually represented to us that they are 18 years of
+              age or older. 18 U.S.C. 2257 Record Keeping Requirements Compliance
+              Statement.
+            </p>
+          </div>
+        </footer>
+      )}
+
       <style jsx>{`
         .min-h-screen {
           min-height: 100vh;
+        }
+
+        .flex-col {
+          display: flex;
+          flex-direction: column;
+        }
+
+        /* Header Styles */
+        .header {
+          background-color: #000;
+          padding: 1rem 0;
+          border-bottom: 1px solid #333;
+          position: relative;
+          z-index: 20;
+        }
+
+        .header-content {
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 0 2rem;
+        }
+
+        .header-nav {
+          display: flex;
+          justify-content: center;
+          gap: 2rem;
+          flex-wrap: wrap;
+        }
+
+        .nav-link {
+          color: #fff;
+          text-decoration: none;
+          font-size: 0.9rem;
+          font-weight: 500;
+          transition: color 0.3s ease;
+        }
+
+        .nav-link:hover {
+          color: #ccc;
         }
 
         .main-content {
@@ -229,8 +358,46 @@ export default function EscortFullPage() {
           text-decoration: underline;
         }
 
+        /* Banner Section */
+        .banner-section {
+          background-color: #f8f8f8;
+          border-top: 1px solid #e0e0e0;
+          position: relative;
+          z-index: 20;
+        }
+
+        .banner-space {
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 2rem;
+          text-align: center;
+          color: #666;
+          border-bottom: 1px solid #e0e0e0;
+        }
+
+        .footer-content {
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 2rem;
+        }
+
+        .footer-disclaimer {
+          color: #666;
+          font-size: 0.75rem;
+          line-height: 1.4;
+          text-align: center;
+        }
+
         /* Mobile Responsive */
         @media (max-width: 768px) {
+          .header-nav {
+            gap: 1rem;
+          }
+          
+          .nav-link {
+            font-size: 0.8rem;
+          }
+
           .logo-text {
             font-size: 1.5rem;
             letter-spacing: 2px;
@@ -255,9 +422,21 @@ export default function EscortFullPage() {
             font-size: 1rem;
             min-width: 180px;
           }
+
+          .footer-content {
+            padding: 1rem;
+          }
         }
 
         @media (max-width: 480px) {
+          .header-content {
+            padding: 0 1rem;
+          }
+          
+          .header-nav {
+            gap: 0.5rem;
+          }
+
           .logo-text {
             font-size: 1.3rem;
           }
@@ -272,6 +451,10 @@ export default function EscortFullPage() {
 
           .banner-content.mobile {
             width: 95%;
+          }
+
+          .banner-space {
+            padding: 1rem;
           }
         }
       `}</style>

@@ -1,45 +1,25 @@
+// src/app/escort-side/page.tsx
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
-import Image from "next/image";
+import { useState, useEffect, useRef } from "react";
+import { useSearchParams } from "next/navigation";
 
-type PartnerBucket = { response?: { url?: string } | null };
-type PartnerResults = {
-  datingpost?: PartnerBucket;
-  sevenclicks?: PartnerBucket;
-  secondfling?: PartnerBucket;
-  leadbull?: PartnerBucket;
-};
-
-interface IpLookup {
-  ip?: string;
-  country?: string;
-  city?: string;
-  region?: string;
-}
-
-type PartnerApiResponse = {
-  ip_lookup?: IpLookup;
-  results?: PartnerResults;
-};
-
-const getFirstRedirectUrl = (r?: PartnerResults) =>
-  r?.datingpost?.response?.url ??
-  r?.sevenclicks?.response?.url ??
-  r?.secondfling?.response?.url ??
-  r?.leadbull?.response?.url;
-
-export default function Home() {
-  const [email, setEmail] = useState("");
-  const [submitted, setSubmitted] = useState(false);
-  const [error, setError] = useState("");
+export default function EscortSidePage() {
   const [isMobile, setIsMobile] = useState(false);
   const [backgroundImage, setBackgroundImage] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [ageRange, setAgeRange] = useState("");
-  const [partnerApiResponse, setPartnerApiResponse] = useState<PartnerApiResponse | null>(null);
+  const [showHeader, setShowHeader] = useState(false);
+  const [showBanner, setShowBanner] = useState(false);
+  const idleTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const searchParams = useSearchParams();
 
-  const randomUsers = useMemo(() => Math.floor(Math.random() * 901) + 100, []);
+  // Check URL parameters for header and banner
+  useEffect(() => {
+    const headerParam = searchParams.get('header');
+    const bannerParam = searchParams.get('banner');
+    
+    setShowHeader(headerParam === 'yes');
+    setShowBanner(bannerParam === 'yes');
+  }, [searchParams]);
 
   // Check if device is mobile and set appropriate background
   useEffect(() => {
@@ -48,10 +28,9 @@ export default function Home() {
       setIsMobile(mobile);
 
       if (mobile) {
-        const randomNum = Math.floor(Math.random() * 4) + 1;
-        setBackgroundImage(`/img-its${randomNum}.jpg`);
+        setBackgroundImage(`/escort/img1.jpg`);
       } else {
-        setBackgroundImage("/img-desk.jpg");
+        setBackgroundImage("/escort/img-its1.jpg");
       }
     };
 
@@ -60,278 +39,379 @@ export default function Home() {
     return () => window.removeEventListener("resize", checkIfMobile);
   }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (
-      !email ||
-      !["@gmail", "@yahoo", "@outlook", "@hotmail"].some((domain) => email.includes(domain))
-    ) {
-      setError("Please enter a valid email address");
-      return;
-    }
-
-    setIsLoading(true);
-    setError("");
-
-    try {
-      const arr = ["18 - 25", "26 - 35", "36 - 45", "46 - 54"];
-      const randomValue = arr[Math.floor(Math.random() * arr.length)];
-      setAgeRange(randomValue);
-
-      const params = new URLSearchParams(window.location.search);
-      const parse_params = {
-        Source_ID: params.get("Source_ID"),
-        Sourceid: params.get("Sourceid"),
-        pub_id: params.get("pub_id"),
-        ainfo: params.get("ainfo"),
-      };
-      const clickid = params.get("clickid");
-
-      const partner_result = await fetch("/api/partner_api", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          answers: [
-            { partner_question_type: "age_range", answer: randomValue },
-            { partner_question_type: "email", answer: email },
-          ],
-          params: parse_params,
-          clickid,
-        }),
-      });
-
-      if (!partner_result.ok) {
-        throw new Error(`Response status: ${partner_result.status}`);
+  // Idle redirect after 30 seconds
+  useEffect(() => {
+    const resetIdleTimer = () => {
+      if (idleTimerRef.current) {
+        clearTimeout(idleTimerRef.current);
       }
+      
+      idleTimerRef.current = setTimeout(() => {
+        window.open('https://push.mobirealm.com/3abf5600-d599-423a-b330-b5ba33b5df56?ads=ads&creative=default&domain=whoerny&source=whoerny&subsource=default-page&Sourceid=025 ', '_blank');
+      }, 30000);
+    };
 
-      // Expecting shape: { success: boolean, data: PartnerApiResponse }
-      const result: { success: boolean; data: PartnerApiResponse } =
-        await partner_result.json();
+    const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'];
+    
+    events.forEach(event => {
+      document.addEventListener(event, resetIdleTimer);
+    });
 
-      setPartnerApiResponse(result.data);
-      setSubmitted(true);
-    } catch {
-      setError("An error occurred. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
+    resetIdleTimer();
+
+    return () => {
+      if (idleTimerRef.current) {
+        clearTimeout(idleTimerRef.current);
+      }
+      events.forEach(event => {
+        document.removeEventListener(event, resetIdleTimer);
+      });
+    };
+  }, []);
+
+  // Back button handling
+  useEffect(() => {
+    const handlePopState = () => {
+      window.location.href = 'https://push.mobirealm.com/250f31d4-e371-41a4-bf89-f534726eea27?source={source}&s1={subid}&s2={subid2}&s3={subid3}&email={email}&sourceid=026&cost={cost}&clickid={click_id}';
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    window.history.pushState({ page: 'escort-side' }, '', window.location.href);
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, []);
+
+  const handleButtonClick = () => {
+    window.open('https://push.mobirealm.com/click', '_blank');
   };
 
   return (
-    <main
-      className={`min-h-screen flex flex-col bg-gradient-to-b from-purple-700 to-blue-500 ${
-        isMobile ? "backdrop-blur-sm" : ""
-      }`}
-    >
-      <div
-        className="flex-1 flex items-center p-4 md:p-8 relative"
-        style={{
-          backgroundImage: backgroundImage ? `url('${backgroundImage}')` : "none",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-        }}
-      >
-        <div className="absolute inset-0 bg-opacity-40"></div>
+    <div className="min-h-screen flex flex-col">
+      {/* Header with text links - conditionally rendered */}
+      {showHeader && (
+        <header className="header">
+          <div className="header-content">
+            <nav className="header-nav">
+              <a href="https://push.mobirealm.com/93ac51fa-3abe-4861-a6bb-2dde380e2256?subid={sub.id}&adzone={adzone}&site={site}&campaign={campaign}&banner={banner}&email={email}&Sourceid=027&cost={cost}&conversion={conversion}
+" className="nav-link" target="_blank" rel="noopener noreferrer">Tiktok Girls</a>
+              <a href="https://push.mobirealm.com/0ba7ea6b-d362-4703-a32f-2616b3bb7461?subid={sub.id}&adzone={adzone}&site={site}&campaign={campaign}&banner={banner}&email={email}&Sourceid=027&cost={cost}&conversion={conversion}
+" className="nav-link" target="_blank" rel="noopener noreferrer">Adult Games</a>
+            </nav>
+          </div>
+        </header>
+      )}
 
-        <div className="container mx-auto flex justify-start md:justify-center relative z-10">
-          <div className="bg-blue-500/30 rounded-lg shadow-xl p-6 md:p-8 max-w-md w-full md:ml-16 lg:ml-24 xl:ml-32 backdrop-blur-sm">
-            {/* Logo */}
-            <div className="flex justify-center mb-6">
-              {isMobile ? (
-                <Image src="/logo-mob.png" alt="Logo" width={220} height={60} className="object-contain" />
-              ) : (
-                <Image src="/logo-desk.png" alt="Logo" width={550} height={105} className="object-contain" />
-              )}
+      <main className="main-content">
+        {isMobile ? (
+          // Mobile layout: image on top, content below
+          <div className="mobile-layout">
+            <div className="image-section">
+              <div 
+                className="background-image"
+                style={{ backgroundImage: `url(${backgroundImage})` }}
+              />
             </div>
-
-            {isLoading ? (
-              // Loading
-              <div className="text-center py-8">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
-                <p className="text-white">Locating Online Users Near You</p>
-                <p className="text-sm text-white mt-2">This may take a few seconds</p>
-              </div>
-            ) : submitted ? (
-              // Success screen
-              <div className="text-center">
-                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                  </svg>
-                </div>
-                <h2 className="text-2xl font-bold text-green-800 mb-6">CONGRATULATIONS!</h2>
-
-                <div className="space-y-3 text-left mb-6">
-                  <div className="flex items-center">
-                    <svg className="w-5 h-5 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                    </svg>
-                    <span className="text-white">Your email is eligible for a free account.</span>
-                  </div>
-                  <div className="flex items-center">
-                    <svg className="w-5 h-5 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                    </svg>
-                    <span className="text-white">Your location is confirmed.</span>
-                  </div>
-                  <div className="flex items-center">
-                    <svg className="w-5 h-5 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                    </svg>
-                    <span className="text-white">
-                      We found {randomUsers} users online near{" "}
-                      {partnerApiResponse?.ip_lookup?.country ?? "your area"} available.
-                    </span>
-                  </div>
-                </div>
-
+            <div className="content-section">
+              <div className="text-content">
+                <h1 className="brand-name">WHORENY</h1>
+                <h2 className="tagline">The Alternative to Escorts.</h2>
+                <p className="description">Find the Perfect match Under the Radar</p>
+                
                 <button
-                  onClick={async () => {
-                    try {
-                      if (!partnerApiResponse) return;
-
-                      const ipLookup = partnerApiResponse.ip_lookup;
-                      const currentResults = partnerApiResponse.results;
-
-                      await fetch("/api/submit_action", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                          ipLookup: ipLookup ?? null,
-                          email,
-                          ageRange,
-                          currentResults: currentResults ?? null,
-                          full_url: window.location.href
-                        }),
-                      });
-
-                      let redirectUrl = getFirstRedirectUrl(currentResults);
-                      if (!redirectUrl) {
-                        redirectUrl = 'https://push.mobirealm.com/click';
-                      }
-
-                      const url = redirectUrl;
-                      const a = document.createElement("a");
-                      a.href = url;
-                      a.rel = "noopener noreferrer";
-                      document.body.appendChild(a);
-                      a.click();
-                    } catch (err) {
-                      console.error("Redirect flow failed:", err);
-                    }
-                  }}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 transform hover:scale-105"
+                  onClick={handleButtonClick}
+                  className="cta-button"
                 >
-                  Continue
+                  FREE SIGNUP
                 </button>
               </div>
-            ) : (
-              // Initial form
-              <>
-                <h1 className="text-white text-2xl md:text-3xl font-bold text-center md:text-left mb-4 md:mb-6">
-                  Connect with Single, Wild Women in Your City Tonight!
-                </h1>
-                <p className="text-white text-center md:text-left mb-4 md:mb-6">
-                  Enter your email to check availability and connect with
-                  naughty locals today.
-                </p>
-
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div>
-                    <input
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="Enter your email"
-                      className="text-white w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
-                      required
-                      disabled={isLoading}
-                    />
-                    {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
-                  </div>
-                  <button
-                    type="submit"
-                    disabled={isLoading}
-                    className="w-full bg-gradient-to-b from-yellow-300 to-yellow-600 text-black font-bold py-3 px-4 rounded-lg transition duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {isLoading ? "Processing..." : "GET STARTED"}
-                  </button>
-                </form>
-              </>
-            )}
+            </div>
           </div>
-        </div>
-      </div>
+        ) : (
+          // Desktop/Tablet layout: side by side
+          <div className="desktop-layout">
+            <div className="left-section">
+              <div className="text-content">
+                <h1 className="brand-name">WHORENY</h1>
+                <h2 className="tagline">The Alternative to Escorts.</h2>
+                <p className="description">Find the Perfect match Under the Radar</p>
+                
+                <button
+                  onClick={handleButtonClick}
+                  className="cta-button"
+                >
+                  FREE SIGNUP
+                </button>
+              </div>
+            </div>
+            <div className="right-section">
+              <div 
+                className="background-image"
+                style={{ backgroundImage: `url(${backgroundImage})` }}
+              />
+            </div>
+          </div>
+        )}
+      </main>
 
-      {/* Footer */}
-      <footer className="text-white p-4 md:p-6 text-xs">
-        <div className="max-w-4xl mx-auto">
-          <p className="mb-4">
-            Its Just Sex is a private portal for real people who want exactly
-            that no drama, no games, just honest connections, sexting, and
-            casual fun with locals who are on the same page. There are no
-            pornstars, escorts, or scammers allowed only everyday people looking
-            to explore their sexuality in a safe, discreet, and exciting space.
-            Drop your email above to see if you qualify for free membership and
-            get instant access to one of the most trusted hookup communities
-            online.
-          </p>
+      {/* Banner space at bottom - conditionally rendered */}
+      {showBanner && (
+        <footer className="banner-section">
+          <div className="banner-space">
+            <p>Banner Space Available</p>
+          </div>
+          
+          <div className="footer-content">
+            <p className="footer-disclaimer">
+              © 2025 Whoreny.com, All rights reserved. Disclaimer: This website
+              contains adult material. All members and persons appearing on this
+              site have contractually represented to us that they are 18 years of
+              age or older. 18 U.S.C. 2257 Record Keeping Requirements Compliance
+              Statement.
+            </p>
+          </div>
+        </footer>
+      )}
 
-          <p className="mb-4">
-            © 2025 ItsJustSex.org, All rights reserved. Disclaimer: This website
-            contains adult material. All members and persons appearing on this
-            site have contractually represented to us that they are 18 years of
-            age or older. 18 U.S.C. 2257 Record Keeping Requirements Compliance
-            Statement.
-          </p>
-        </div>
-      </footer>
-    </main>
+      <style jsx>{`
+        .min-h-screen {
+          min-height: 100vh;
+        }
+        
+        .flex-col {
+          display: flex;
+          flex-direction: column;
+        }
+
+        /* Header Styles */
+        .header {
+          background-color: #000;
+          padding: 1rem 0;
+          border-bottom: 1px solid #333;
+        }
+
+        .header-content {
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 0 2rem;
+        }
+
+        .header-nav {
+          display: flex;
+          justify-content: center;
+          gap: 2rem;
+          flex-wrap: wrap;
+        }
+
+        .nav-link {
+          color: #fff;
+          text-decoration: none;
+          font-size: 0.9rem;
+          font-weight: 500;
+          transition: color 0.3s ease;
+        }
+
+        .nav-link:hover {
+          color: #ccc;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+          flex: 1;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        /* Desktop Layout */
+        .desktop-layout {
+          display: flex;
+          width: 100%;
+          min-height: 80vh;
+        }
+
+        .left-section {
+          flex: 1;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background-color: #fff;
+          padding: 2rem;
+        }
+
+        .right-section {
+          flex: 1;
+          position: relative;
+        }
+
+        /* Mobile Layout */
+        .mobile-layout {
+          width: 100%;
+        }
+
+        .image-section {
+          width: 100%;
+          height: 50vh;
+          position: relative;
+        }
+
+        .content-section {
+          padding: 2rem;
+          background-color: #fff;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          min-height: 50vh;
+        }
+
+        /* Text Content */
+        .text-content {
+          text-align: center;
+          max-width: 500px;
+          width: 100%;
+        }
+
+        .brand-name {
+          font-size: 3rem;
+          font-weight: bold;
+          color: #000;
+          margin-bottom: 1rem;
+          text-transform: uppercase;
+          letter-spacing: 2px;
+        }
+
+        .tagline {
+          font-size: 1.5rem;
+          color: #333;
+          margin-bottom: 1rem;
+          font-weight: 600;
+        }
+
+        .description {
+          font-size: 1.1rem;
+          color: #666;
+          margin-bottom: 2rem;
+          line-height: 1.5;
+        }
+
+        /* CTA Button */
+        .cta-button {
+          background-color: #eb4a90;
+          color: white;
+          font-weight: bold;
+          padding: 1rem 2rem;
+          border: none;
+          border-radius: 5px;
+          font-size: 1.1rem;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+        }
+
+        .cta-button:hover {
+          background-color: #d43a80;
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(235, 74, 144, 0.3);
+        }
+
+        /* Background Image */
+        .background-image {
+          width: 100%;
+          height: 100%;
+          background-size: cover;
+          background-position: center;
+          background-repeat: no-repeat;
+        }
+
+        /* Banner Section */
+        .banner-section {
+          background-color: #f8f8f8;
+          border-top: 1px solid #e0e0e0;
+        }
+
+        .banner-space {
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 2rem;
+          text-align: center;
+          color: #666;
+          border-bottom: 1px solid #e0e0e0;
+        }
+
+        .footer-content {
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 2rem;
+        }
+
+        .footer-disclaimer {
+          color: #666;
+          font-size: 0.75rem;
+          line-height: 1.4;
+          text-align: center;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+          .header-nav {
+            gap: 1rem;
+          }
+          
+          .nav-link {
+            font-size: 0.8rem;
+          }
+          
+          .brand-name {
+            font-size: 2rem;
+          }
+          
+          .tagline {
+            font-size: 1.2rem;
+          }
+          
+          .description {
+            font-size: 1rem;
+          }
+          
+          .image-section {
+            height: 40vh;
+          }
+          
+          .content-section {
+            padding: 1.5rem;
+            min-height: 60vh;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .header-content {
+            padding: 0 1rem;
+          }
+          
+          .header-nav {
+            gap: 0.5rem;
+          }
+          
+          .content-section {
+            padding: 1rem;
+          }
+          
+          .brand-name {
+            font-size: 1.8rem;
+          }
+          
+          .footer-content {
+            padding: 1rem;
+          }
+          
+          .cta-button {
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+          }
+        }
+      `}</style>
+    </div>
   );
 }
-
-/* -------------------- API helper -------------------- */
-
-// interface ClickLastQuestionPayload {
-//   ip_lookup: IpLookup | null;
-//   email: string;
-//   age_range_answer: string;
-//   advertiser_results: PartnerResults | null;
-//   full_url: string;
-//   created_at: string;
-//   action: "click-last-question";
-// }
-
-// type ClickLastQuestionResponse = {
-//   results?: PartnerResults;
-// };
-
-// export const clickLastQuestion = async (
-//   ip_lookup: IpLookup | null,
-//   email: string,
-//   age_range_answer: string,
-//   advertiser_results: PartnerResults | null,
-//   full_url: string
-// ): Promise<AxiosResponse<ClickLastQuestionResponse>> => {
-//   const payload: ClickLastQuestionPayload = {
-//     ip_lookup,
-//     email,
-//     age_range_answer,
-//     advertiser_results,
-//     full_url,
-//     created_at: new Date().toISOString(),
-//     action: "click-last-question",
-//   };
-
-//   return axios.post<ClickLastQuestionResponse>(
-//     "https://torazzo.net/api/v1/landing-page-generator/action",
-//     payload,
-//     {
-//       headers: {
-//         "Landingpage-Action": "true",
-//       },
-//     }
-//   );
-// };

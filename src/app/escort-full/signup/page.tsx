@@ -97,10 +97,10 @@ export default function SignupPage() {
             <h2>Terms and Conditions</h2>
             <div className="modal-body">        
               <h3>1. Acceptance of Terms</h3>
-              <p>By accessing and using ItsJustSex, you accept and agree to be bound by the terms and provision of this agreement.</p>
+              <p>By accessing and using Whoreny, you accept and agree to be bound by the terms and provision of this agreement.</p>
               
               <h3>2. Use License</h3>
-              <p>Permission is granted to temporarily use ItsJustSex for personal, non-commercial transitory viewing only.</p>
+              <p>Permission is granted to temporarily use Whoreny for personal, non-commercial transitory viewing only.</p>
               
               <h3>3. User Account</h3>
               <p>You are responsible for maintaining the confidentiality of your account and password and for restricting access to your computer.</p>
@@ -157,7 +157,7 @@ export default function SignupPage() {
           <div className="logo-section">
             <Image 
               src={isMobile ? "/logo-mob.png" : "/logo-desk.png"} 
-              alt="ItsJustSex Logo" 
+              alt="Whoreny Logo" 
               width={isMobile ? 200 : 300}
               height={isMobile ? 50 : 75}
               className="logo-image"
@@ -232,12 +232,12 @@ export default function SignupPage() {
 
             {/* Terms Text */}
             <div className="terms-text">
-              By clicking 'Sign Up' I certify that I'm at least 18 years old and agree to the{" "}
+              By clicking &apos;Sign Up&apos; I certify that I&apos;m at least 18 years old and agree to the{" "}
               <button 
                 className="link-btn" 
                 onClick={() => setShowPrivacy(true)}
               >
-                ItsJustSex Privacy Policy
+                Whoreny Privacy Policy
               </button>{" "}
               and{" "}
               <button 
@@ -252,7 +252,7 @@ export default function SignupPage() {
           {/* Footer */}
           <div className="form-footer">
             <p className="footer-text">
-              © {currentYear} ItsJustSex
+              © {currentYear} Whoreny
             </p>
           </div>
         </div>
