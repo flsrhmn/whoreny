@@ -1,10 +1,11 @@
 // src/app/escort-full/page.tsx
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
+import Image from "next/image";
 
-export default function EscortFullPage() {
+function EscortFullContent() {
   const [isMobile, setIsMobile] = useState(false);
   const [showHeader, setShowHeader] = useState(false);
   const [showBanner, setShowBanner] = useState(false);
@@ -28,7 +29,7 @@ export default function EscortFullPage() {
       }
       
       idleTimerRef.current = setTimeout(() => {
-        window.open('https://push.mobirealm.com/3abf5600-d599-423a-b330-b5ba33b5df56?ads=ads&creative=escort-full&domain=whoerny&source=whoerny&subsource=escort-full&Sourceid=025 ', '_blank');
+        window.open('https://push.mobirealm.com/3abf5600-d599-423a-b330-b5ba33b5df56?ads=ads&creative=escort-full&domain=whoerny&source=whoerny&subsource=escort-full&Sourceid=025', '_blank');
       }, 30000);
     };
 
@@ -53,7 +54,7 @@ export default function EscortFullPage() {
   // Back button handling
   useEffect(() => {
     const handlePopState = () => {
-      window.location.href = 'https://push.mobirealm.com/250f31d4-e371-41a4-bf89-f534726eea27?source={source}&s1={subid}&s2={subid2}&s3={subid3}&email={email}&sourceid=026&cost={cost}&clickid={click_id}';
+      window.location.href = 'https://push.mobirealm.com/250f31d4-e371-41a4-bf89-f534726eea27?source=whoreny&s1=escort-full&s2=BB&email={email}&sourceid=026&cost={cost}&clickid={click_id}';
     };
 
     window.addEventListener('popstate', handlePopState);
@@ -110,7 +111,16 @@ export default function EscortFullPage() {
           
           {/* Logo - Top Left for Desktop, Center for Mobile */}
           <div className={`logo-container ${isMobile ? 'mobile' : 'desktop'}`}>
-            <h1 className="logo-text">WHORENY</h1>
+            <div className="logo-section">
+                <Image 
+                  src={isMobile ? "/logo-mob.png" : "/logo-desk.png"} 
+                  alt="whoreny Logo" 
+                  width={isMobile ? 220 : 550}
+                  height={isMobile ? 42 : 105}
+                  className="logo-image"
+                />
+              </div>
+            {/* <h1 className="logo-text">WHORENY</h1> */}
           </div>
 
           {/* Banner Content */}
@@ -146,7 +156,7 @@ export default function EscortFullPage() {
           
           <div className="footer-content">
             <p className="footer-disclaimer">
-              © 2025 ItsJustSex.org, All rights reserved. Disclaimer: This website
+              © 2025 Whoreny.com, All rights reserved. Disclaimer: This website
               contains adult material. All members and persons appearing on this
               site have contractually represented to us that they are 18 years of
               age or older. 18 U.S.C. 2257 Record Keeping Requirements Compliance
@@ -321,7 +331,7 @@ export default function EscortFullPage() {
         }
 
         .join-button {
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          background: linear-gradient(135deg, #ff3131 0%, #ff914d 100%);
           color: white;
           font-weight: bold;
           padding: 0.8rem 3rem;
@@ -459,5 +469,17 @@ export default function EscortFullPage() {
         }
       `}</style>
     </div>
+  );
+}
+
+export default function EscortFullPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-black">
+        <div className="text-white text-xl">Loading...</div>
+      </div>
+    }>
+      <EscortFullContent />
+    </Suspense>
   );
 }

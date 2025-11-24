@@ -154,6 +154,7 @@ export default function SignupPage() {
       <div className="signup-container">
         <div className="form-box">
           {/* Logo */}
+          <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "1rem" }}>
           <div className="logo-section">
             <Image 
               src={isMobile ? "/logo-mob.png" : "/logo-desk.png"} 
@@ -162,6 +163,7 @@ export default function SignupPage() {
               height={isMobile ? 50 : 75}
               className="logo-image"
             />
+          </div>
           </div>
 
           <form className="form-content" onSubmit={handleSubmit}>

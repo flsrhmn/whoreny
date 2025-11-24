@@ -3,6 +3,7 @@
 
 import { useState, useEffect, useRef, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
+import Image from "next/image";
 
 // Create a separate component for the content that uses useSearchParams
 function EscortSideContent() {
@@ -90,7 +91,7 @@ useEffect(() => {
   // Back button handling
   useEffect(() => {
     const handlePopState = () => {
-      window.location.href = 'https://push.mobirealm.com/250f31d4-e371-41a4-bf89-f534726eea27?source={source}&s1={subid}&s2={subid2}&s3={subid3}&email={email}&sourceid=026&cost={cost}&clickid={click_id}';
+      window.location.href = 'https://push.mobirealm.com/250f31d4-e371-41a4-bf89-f534726eea27?source=whoreny&s1=default&s2=BB&email={email}&sourceid=026&cost={cost}&clickid={click_id}';
     };
 
     window.addEventListener('popstate', handlePopState);
@@ -131,9 +132,24 @@ useEffect(() => {
                 style={{ backgroundImage: `url(${backgroundImage})` }}
               />
             </div>
+            
             <div className="content-section">
               <div className="text-content">
-                <h1 className="brand-name">WHORENY</h1>
+                    
+                <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "1rem" }}>
+                  {/* <h1 className="brand-name">WHORENY</h1> */}
+                  <div className="logo-section">
+                    <Image 
+                      src={isMobile ? "/logo-mob.png" : "/logo-desk.png"} 
+                      alt="whoreny Logo" 
+                      width={isMobile ? 220 : 550}
+                      height={isMobile ? 42 : 105}
+                      className="logo-image"
+                      style={{alignItems: "center"}}
+                      // style prop removed because 'align' is not a valid CSS property
+                    />
+                  </div>
+                </div>
                 <h2 className="tagline">The Alternative to Escorts.</h2>
                 <p className="description">Chat. Trade Nudes. Fuck Like Whores. That&nbsp;s WhoreNy.</p>
                 
@@ -151,7 +167,16 @@ useEffect(() => {
           <div className="desktop-layout">
             <div className="left-section">
               <div className="text-content">
-                <h1 className="brand-name">WHORENY</h1>
+                  <div className="logo-section">
+                    <Image 
+                      src={isMobile ? "/logo-mob.png" : "/logo-desk.png"} 
+                      alt="whoreny Logo" 
+                      width={isMobile ? 220 : 550}
+                      height={isMobile ? 42 : 105}
+                      className="logo-image"
+                    />
+                  </div>
+                {/* <h1 className="brand-name">WHORENY</h1> */}
                 <h2 className="tagline">The Alternative to Escorts.</h2>
                 <p className="description">Chat. Trade Nudes. Fuck Like Whores. That’s WhoreNy.</p>
                 
@@ -202,6 +227,33 @@ useEffect(() => {
           min-height: 100vh;
         }
         
+        /* Logo Styles */
+        .logo-container.desktop {
+          position: absolute;
+          top: 2rem;
+          left: 2rem;
+          z-index: 10;
+        }
+
+        .logo-container.mobile {
+          position: absolute;
+          top: 2rem;
+          left: 50%;
+          transform: translateX(-50%);
+          z-index: 10;
+          text-align: center;
+        }
+
+        .logo-text {
+          color: white;
+          font-size: 1.8rem;
+          font-weight: bold;
+          text-transform: uppercase;
+          letter-spacing: 3px;
+          margin: 0;
+          text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
         .flex-col {
           display: flex;
           flex-direction: column;

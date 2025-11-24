@@ -1,68 +1,18 @@
-// src/app/escort-full/page.tsx
+// src/app/escort-full/login/page.tsx
 "use client";
 
-import { useState, useEffect, useRef, Suspense } from "react";
+import { useState, useEffect, Suspense } from "react";
+import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 
-function EscortFullContent() {
+function LoginContent() {
   const [isMobile, setIsMobile] = useState(false);
-  const [showHeader, setShowHeader] = useState(false);
-  const [showBanner, setShowBanner] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [showTerms, setShowTerms] = useState(false);
+  const [showPrivacy, setShowPrivacy] = useState(false);
   const searchParams = useSearchParams();
-  const idleTimerRef = useRef<NodeJS.Timeout | null>(null);
-
-  // Check URL parameters for header and banner
-  useEffect(() => {
-    const headerParam = searchParams.get('header');
-    const bannerParam = searchParams.get('banner');
-    
-    setShowHeader(headerParam === 'yes');
-    setShowBanner(bannerParam === 'yes');
-  }, [searchParams]);
-
-  // Idle redirect after 30 seconds
-  useEffect(() => {
-    const resetIdleTimer = () => {
-      if (idleTimerRef.current) {
-        clearTimeout(idleTimerRef.current);
-      }
-      
-      idleTimerRef.current = setTimeout(() => {
-        window.open('https://push.mobirealm.com/3abf5600-d599-423a-b330-b5ba33b5df56?ads=ads&creative=escort-full&domain=whoerny&source=whoerny&subsource=escort-full&Sourceid=025 ', '_blank');
-      }, 30000);
-    };
-
-    const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'];
-    
-    events.forEach(event => {
-      document.addEventListener(event, resetIdleTimer);
-    });
-
-    resetIdleTimer();
-
-    return () => {
-      if (idleTimerRef.current) {
-        clearTimeout(idleTimerRef.current);
-      }
-      events.forEach(event => {
-        document.removeEventListener(event, resetIdleTimer);
-      });
-    };
-  }, []);
-
-  // Back button handling
-  useEffect(() => {
-    const handlePopState = () => {
-      window.location.href = 'https://push.mobirealm.com/250f31d4-e371-41a4-bf89-f534726eea27?source={source}&s1={subid}&s2={subid2}&s3={subid3}&email={email}&sourceid=026&cost={cost}&clickid={click_id}';
-    };
-
-    window.addEventListener('popstate', handlePopState);
-    window.history.pushState({ page: 'escort-full' }, '', window.location.href);
-
-    return () => {
-      window.removeEventListener('popstate', handlePopState);
-    };
-  }, []);
 
   useEffect(() => {
     const checkIfMobile = () => {
@@ -74,387 +24,423 @@ function EscortFullContent() {
     return () => window.removeEventListener("resize", checkIfMobile);
   }, []);
 
-  const handleJoinFree = () => {
-    window.location.href = 'https://push.mobirealm.com/click';
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("Your email or password did not match.");
   };
 
+  const currentYear = new Date().getFullYear();
+
   return (
-    <div className="min-h-screen flex flex-col">
-      {/* Header with text links - conditionally rendered */}
-      {showHeader && (
-        <header className="header">
-          <div className="header-content">
-            <nav className="header-nav">
-              <a href="https://push.mobirealm.com/93ac51fa-3abe-4861-a6bb-2dde380e2256?subid={sub.id}&adzone={adzone}&site={site}&campaign={campaign}&banner={banner}&email={email}&Sourceid=027&cost={cost}&conversion={conversion}" className="nav-link" target="_blank" rel="noopener noreferrer">Tiktok Girls</a>
-              <a href="https://push.mobirealm.com/0ba7ea6b-d362-4703-a32f-2616b3bb7461?subid={sub.id}&adzone={adzone}&site={site}&campaign={campaign}&banner={banner}&email={email}&Sourceid=027&cost={cost}&conversion={conversion}
-" className="nav-link" target="_blank" rel="noopener noreferrer">Adult Games</a>
-            </nav>
-          </div>
-        </header>
-      )}
-
-      <main className="main-content">
-        {/* Background Video/Image */}
-        <div className="video-container">
-          <video 
-            autoPlay 
-            loop 
-            muted 
-            playsInline 
-            className="background-video"
-            poster="/escort/gif1.mp4"
-          >
-            <source src="/escort/gif1.mp4" type="video/mp4" />
-          </video>
-          <div className="video-overlay"></div>
-          
-          {/* Logo - Top Left for Desktop, Center for Mobile */}
-          <div className={`logo-container ${isMobile ? 'mobile' : 'desktop'}`}>
-            <h1 className="logo-text">WHORENY</h1>
-          </div>
-
-          {/* Banner Content */}
-          <div className={`banner-content ${isMobile ? 'mobile' : 'desktop'}`}>
-            <div className="banner-text">
-              <h1 className="main-heading">The Alternative to Escorts</h1>
-              <div className="divider"></div>
-              <p className="sub-heading">Meet a Hot Sugar Baby Today</p>
+    <div className="login-page">
+      {/* Terms Modal */}
+      {showTerms && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <button 
+              className="close-btn"
+              onClick={() => setShowTerms(false)}
+            >
+              ×
+            </button>
+            <h2>Terms and Conditions</h2>
+            <div className="modal-body">
+              <h3>1. Acceptance of Terms</h3>
+              <p>By accessing and using Whoreny, you accept and agree to be bound by the terms and provision of this agreement.</p>
+              
+              <h3>2. Use License</h3>
+              <p>Permission is granted to temporarily use Whoreny for personal, non-commercial transitory viewing only.</p>
+              
+              <h3>3. User Account</h3>
+              <p>You are responsible for maintaining the confidentiality of your account and password and for restricting access to your computer.</p>
+              
+              <h3>4. Content Responsibility</h3>
+              <p>You understand that all content posted by you is your sole responsibility and that you will indemnify us for any claims resulting from your content.</p>
+              
+              <h3>5. Termination</h3>
+              <p>We may terminate or suspend access to our service immediately, without prior notice, for any reason whatsoever.</p>
             </div>
-
-            {/* CTA Section */}
-            <footer className="cta-section">
-              <button
-                onClick={handleJoinFree}
-                className="join-button"
-              >
-                Join Free
-              </button>
-              <p className="login-prompt">
-                Already a member? <a href="/escort-full/login" className="login-link">Log in</a>.
-              </p>
-            </footer>
           </div>
         </div>
-      </main>
-
-      {/* Banner space at bottom - conditionally rendered */}
-      {showBanner && (
-        <footer className="banner-section">
-          <div className="banner-space">
-            <p>Banner Space Available</p>
-          </div>
-          
-          <div className="footer-content">
-            <p className="footer-disclaimer">
-              © 2025 ItsJustSex.org, All rights reserved. Disclaimer: This website
-              contains adult material. All members and persons appearing on this
-              site have contractually represented to us that they are 18 years of
-              age or older. 18 U.S.C. 2257 Record Keeping Requirements Compliance
-              Statement.
-            </p>
-          </div>
-        </footer>
       )}
 
+      {/* Privacy Policy Modal */}
+      {showPrivacy && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <button 
+              className="close-btn"
+              onClick={() => setShowPrivacy(false)}
+            >
+              ×
+            </button>
+            <h2>Privacy Policy</h2>
+            <div className="modal-body">
+              <p><strong>Last Updated: {new Date().toLocaleDateString()}</strong></p>
+              
+              <h3>1. Information We Collect</h3>
+              <p>We collect information you provide directly to us, such as when you create an account, update your profile, or use our services.</p>
+              
+              <h3>2. How We Use Your Information</h3>
+              <p>We use the information we collect to provide, maintain, and improve our services, communicate with you, and ensure security.</p>
+              
+              <h3>3. Information Sharing</h3>
+              <p>We do not share your personal information with third parties except as described in this policy or with your consent.</p>
+              
+              <h3>4. Data Security</h3>
+              <p>We implement appropriate technical and organizational security measures to protect your personal information.</p>
+              
+              <h3>5. Your Rights</h3>
+              <p>You have the right to access, correct, or delete your personal information at any time through your account settings.</p>
+              
+              <h3>6. Cookies</h3>
+              <p>We use cookies and similar technologies to track activity and hold certain information to improve user experience.</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="login-container">
+
+        <div className="form-box">
+          {/* Logo */}
+          <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "1rem" }}>
+          <div className="logo-section">
+            <Image 
+              src={isMobile ? "/logo-mob.png" : "/logo-desk.png"} 
+              alt="whoreny Logo" 
+              width={isMobile ? 220 : 550}
+              height={isMobile ? 42 : 105}
+              className="logo-image"
+            />
+          </div>
+          </div>
+
+          {/* Title */}
+          <h2 className="form-title">Login To Whoreny</h2>
+
+          <form className="form-content" onSubmit={handleLogin}>
+            {/* Email Input */}
+            <div className="input-group">
+              <input
+                id="email"
+                name="email"
+                type="email"
+                required
+                className="form-input"
+                placeholder="Email Address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+
+            {/* Password Input */}
+            <div className="input-group">
+              <input
+                id="password"
+                name="password"
+                type="password"
+                required
+                className="form-input"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+
+            {/* Error Message */}
+            {error && (
+              <div className="error-message">
+                {error}
+              </div>
+            )}
+
+            {/* Login Button */}
+            <button type="submit" className="login-btn">
+              Login
+            </button>
+          </form>
+
+          {/* Sign Up Section */}
+          <div className="signup-section">
+            <p className="signup-text">Dont Have an Account?</p>
+            <a href="/escort-full/signup" className="signup-btn">
+              Free Signup
+            </a>
+          </div>
+
+          {/* Footer */}
+          <div className="form-footer">
+            <p className="footer-text">
+              © {currentYear} Whoreny<br />
+              By clicking Login you accept our{" "}
+              <button 
+                className="link-btn" 
+                onClick={() => setShowTerms(true)}
+              >
+                Terms
+              </button>{" "}
+              and{" "}
+              <button 
+                className="link-btn" 
+                onClick={() => setShowPrivacy(true)}
+              >
+                Privacy Policy
+              </button>.
+            </p>
+          </div>
+        </div>
+      </div>
+
       <style jsx>{`
-        .min-h-screen {
+        .login-page {
           min-height: 100vh;
-        }
-
-        .flex-col {
           display: flex;
-          flex-direction: column;
-        }
-
-        /* Header Styles */
-        .header {
-          background-color: #000;
-          padding: 1rem 0;
-          border-bottom: 1px solid #333;
-          position: relative;
-          z-index: 20;
-        }
-
-        .header-content {
-          max-width: 1200px;
-          margin: 0 auto;
-          padding: 0 2rem;
-        }
-
-        .header-nav {
-          display: flex;
+          align-items: center;
           justify-content: center;
-          gap: 2rem;
-          flex-wrap: wrap;
-        }
-
-        .nav-link {
-          color: #fff;
-          text-decoration: none;
-          font-size: 0.9rem;
-          font-weight: 500;
-          transition: color 0.3s ease;
-        }
-
-        .nav-link:hover {
-          color: #ccc;
-        }
-
-        .main-content {
-          flex: 1;
+          background: white;
+          padding: 1rem;
           position: relative;
         }
 
-        .video-container {
+        .login-container {
           position: relative;
+          z-index: 10;
           width: 100%;
-          height: 100vh;
-          overflow: hidden;
-        }
-
-        .background-video {
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          min-width: 100%;
-          min-height: 100%;
-          width: auto;
-          height: auto;
-          object-fit: cover;
-        }
-
-        .video-overlay {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background: rgba(0, 0, 0, 0.4);
-        }
-
-        /* Logo Styles */
-        .logo-container.desktop {
-          position: absolute;
-          top: 2rem;
-          left: 2rem;
-          z-index: 10;
-        }
-
-        .logo-container.mobile {
-          position: absolute;
-          top: 2rem;
-          left: 50%;
-          transform: translateX(-50%);
-          z-index: 10;
-          text-align: center;
-        }
-
-        .logo-text {
-          color: white;
-          font-size: 1.8rem;
-          font-weight: bold;
-          text-transform: uppercase;
-          letter-spacing: 3px;
-          margin: 0;
-          text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-        }
-
-        /* Banner Content Styles */
-        .banner-content.desktop {
-          position: absolute;
-          top: 50%;
-          left: 2rem;
-          transform: translateY(-50%);
-          z-index: 10;
-          text-align: left;
-          max-width: 500px;
-        }
-
-        .banner-content.mobile {
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          z-index: 10;
-          text-align: center;
-          width: 90%;
           max-width: 400px;
         }
 
-        .banner-text {
+        .form-box {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          border-radius: 20px;
+          padding: 2.5rem;
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+          backdrop-filter: blur(10px);
+          color: white;
+        }
+
+        .logo-section {
+          text-align: center;
+          margin-bottom: 1.5rem;
+        }
+
+        .logo-image {
+          margin: 0 auto;
+        }
+
+        .form-title {
+          text-align: center;
+          color: white;
+          font-size: 1.5rem;
+          font-weight: bold;
           margin-bottom: 2rem;
         }
 
-        .main-heading {
+        .form-content {
+          space-y-6;
+        }
+
+        .input-group {
+          margin-bottom: 1.5rem;
+        }
+
+        .form-input {
+          width: 100%;
+          padding: 1rem;
+          border: 2px solid rgba(255, 255, 255, 0.3);
+          border-radius: 10px;
+          font-size: 1rem;
+          transition: all 0.3s ease;
+          background: rgba(255, 255, 255, 0.1);
           color: white;
-          font-size: 2.5rem;
-          font-weight: bold;
-          margin: 0 0 1.5rem 0;
-          text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
-          line-height: 1.2;
         }
 
-        .divider {
-          width: 80px;
-          height: 3px;
-          background: white;
-          margin: 1.5rem 0;
-          border-radius: 2px;
+        .form-input::placeholder {
+          color: rgba(255, 255, 255, 0.7);
         }
 
-        .banner-content.mobile .divider {
-          margin: 1.5rem auto;
+        .form-input:focus {
+          outline: none;
+          border-color: white;
+          background: rgba(255, 255, 255, 0.2);
+          box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
         }
 
-        .sub-heading {
-          color: white;
-          font-size: 1.3rem;
-          margin: 0;
-          text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
-          line-height: 1.4;
-        }
-
-        /* CTA Section */
-        .cta-section {
+        .error-message {
+          background: rgba(254, 215, 215, 0.9);
+          border: 1px solid #feb2b2;
+          color: #c53030;
+          padding: 0.75rem 1rem;
+          border-radius: 10px;
+          font-size: 0.9rem;
+          margin-bottom: 1rem;
           text-align: center;
         }
 
-        .join-button {
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-          color: white;
-          font-weight: bold;
-          padding: 0.8rem 3rem;
+        .login-btn {
+          width: 100%;
+          background: white;
+          color: #667eea;
           border: none;
-          border-radius: 25px;
-          font-size: 1.1rem;
+          padding: 1rem;
+          border-radius: 10px;
+          font-size: 1rem;
+          font-weight: bold;
           cursor: pointer;
           transition: all 0.3s ease;
-          text-transform: uppercase;
-          letter-spacing: 1px;
           margin-bottom: 1rem;
-          min-width: 200px;
         }
 
-        .join-button:hover {
+        .login-btn:hover {
+          background: #f8fafc;
           transform: translateY(-2px);
-          box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+          box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
         }
 
-        .login-prompt {
-          color: white;
-          font-size: 0.9rem;
-          text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
-          margin: 0;
-        }
-
-        .login-link {
-          color: #ffd700;
-          text-decoration: none;
-          font-weight: 600;
-        }
-
-        .login-link:hover {
-          text-decoration: underline;
-        }
-
-        /* Banner Section */
-        .banner-section {
-          background-color: #f8f8f8;
-          border-top: 1px solid #e0e0e0;
-          position: relative;
-          z-index: 20;
-        }
-
-        .banner-space {
-          max-width: 1200px;
-          margin: 0 auto;
-          padding: 2rem;
+        .signup-section {
           text-align: center;
-          color: #666;
-          border-bottom: 1px solid #e0e0e0;
+          margin-top: 1.5rem;
+          padding-top: 1.5rem;
+          border-top: 1px solid rgba(255, 255, 255, 0.3);
         }
 
-        .footer-content {
-          max-width: 1200px;
-          margin: 0 auto;
-          padding: 2rem;
+        .signup-text {
+          color: rgba(255, 255, 255, 0.9);
+          font-size: 0.9rem;
+          margin-bottom: 1rem;
         }
 
-        .footer-disclaimer {
-          color: #666;
+        .signup-btn {
+          display: block;
+          width: 100%;
+          background: rgba(255, 255, 255, 0.9);
+          color: #38a169;
+          text-decoration: none;
+          padding: 1rem;
+          border-radius: 10px;
+          font-size: 1rem;
+          font-weight: bold;
+          text-align: center;
+          transition: all 0.3s ease;
+        }
+
+        .signup-btn:hover {
+          background: white;
+          transform: translateY(-2px);
+          box-shadow: 0 5px 15px rgba(255, 255, 255, 0.3);
+        }
+
+        .form-footer {
+          margin-top: 2rem;
+          text-align: center;
+        }
+
+        .footer-text {
+          color: rgba(255, 255, 255, 0.8);
           font-size: 0.75rem;
           line-height: 1.4;
-          text-align: center;
         }
 
-        /* Mobile Responsive */
+        .link-btn {
+          background: none;
+          border: none;
+          color: white;
+          text-decoration: underline;
+          cursor: pointer;
+          font-size: 0.75rem;
+          padding: 0;
+        }
+
+        .link-btn:hover {
+          color: #f8fafc;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(0, 0, 0, 0.7);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 1000;
+          padding: 1rem;
+        }
+
+        .modal-content {
+          background: white;
+          border-radius: 15px;
+          padding: 2rem;
+          max-width: 600px;
+          max-height: 80vh;
+          overflow-y: auto;
+          position: relative;
+          color: #333;
+        }
+
+        .close-btn {
+          position: absolute;
+          top: 1rem;
+          right: 1rem;
+          background: none;
+          border: none;
+          font-size: 2rem;
+          cursor: pointer;
+          color: #666;
+          width: 40px;
+          height: 40px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 50%;
+        }
+
+        .close-btn:hover {
+          background: #f1f1f1;
+          color: #333;
+        }
+
+        .modal-content h2 {
+          color: #667eea;
+          margin-bottom: 1.5rem;
+          padding-right: 3rem;
+        }
+
+        .modal-body {
+          line-height: 1.6;
+        }
+
+        .modal-body h3 {
+          color: #764ba2;
+          margin: 1.5rem 0 0.5rem 0;
+          font-size: 1.1rem;
+        }
+
+        .modal-body p {
+          margin-bottom: 1rem;
+          color: #555;
+        }
+
         @media (max-width: 768px) {
-          .header-nav {
-            gap: 1rem;
-          }
-          
-          .nav-link {
-            font-size: 0.8rem;
+          .form-box {
+            padding: 2rem 1.5rem;
+            margin: 1rem;
           }
 
-          .logo-text {
-            font-size: 1.5rem;
-            letter-spacing: 2px;
-          }
-
-          .main-heading {
-            font-size: 2rem;
-            margin-bottom: 1rem;
-          }
-
-          .sub-heading {
-            font-size: 1.1rem;
-          }
-
-          .divider {
-            width: 60px;
-            margin: 1rem auto;
-          }
-
-          .join-button {
-            padding: 0.7rem 2.5rem;
-            font-size: 1rem;
-            min-width: 180px;
-          }
-
-          .footer-content {
-            padding: 1rem;
-          }
-        }
-
-        @media (max-width: 480px) {
-          .header-content {
-            padding: 0 1rem;
-          }
-          
-          .header-nav {
-            gap: 0.5rem;
-          }
-
-          .logo-text {
+          .form-title {
             font-size: 1.3rem;
           }
 
-          .main-heading {
-            font-size: 1.7rem;
+          .modal-content {
+            padding: 1.5rem;
+            margin: 1rem;
           }
 
-          .sub-heading {
-            font-size: 1rem;
-          }
-
-          .banner-content.mobile {
-            width: 95%;
-          }
-
-          .banner-space {
-            padding: 1rem;
+          .modal-content h2 {
+            font-size: 1.3rem;
           }
         }
       `}</style>
@@ -462,14 +448,14 @@ function EscortFullContent() {
   );
 }
 
-export default function EscortFullPage() {
+export default function LoginPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-black">
-        <div className="text-white text-xl">Loading...</div>
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="text-gray-600 text-xl">Loading...</div>
       </div>
     }>
-      <EscortFullContent />
+      <LoginContent />
     </Suspense>
   );
 }
