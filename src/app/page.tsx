@@ -1,4 +1,4 @@
-// src/app/escort-side/page.tsx
+// E:\FALIS\Torazzo\LandingPage\Dating\whoreny\src\app\page.tsx
 "use client";
 
 import { useState, useEffect, useRef, Suspense } from "react";
@@ -24,22 +24,23 @@ function EscortSideContent() {
   }, [searchParams]);
 
   // Add this useEffect to load the ad script
-useEffect(() => {
-  if (showBanner) {
-    const script = document.createElement('script');
-    script.src = '//adzone.adveroi.com/delivery/asyncjs.php';
-    script.async = true;
-    document.body.appendChild(script);
-    
-    return () => {
-      // Cleanup: remove the script when component unmounts or showBanner changes
-      if (document.body.contains(script)) {
-        document.body.removeChild(script);
-      }
-    };
-  }
-}, [showBanner])
+  useEffect(() => {
+    if (showBanner) {
+      const script = document.createElement('script');
+      script.src = '//adzone.adveroi.com/delivery/asyncjs.php';
+      script.async = true;
+      document.body.appendChild(script);
+      
+      return () => {
+        // Cleanup: remove the script when component unmounts or showBanner changes
+        if (document.body.contains(script)) {
+          document.body.removeChild(script);
+        }
+      };
+    }
+  }, [showBanner]);
 
+  // Rest of your existing code remains the same...
   // Check if device is mobile and set appropriate background
   useEffect(() => {
     const checkIfMobile = () => {
@@ -146,7 +147,6 @@ useEffect(() => {
                       height={isMobile ? 42 : 105}
                       className="logo-image"
                       style={{alignItems: "center"}}
-                      // style prop removed because 'align' is not a valid CSS property
                     />
                   </div>
                 </div>
@@ -178,7 +178,7 @@ useEffect(() => {
                   </div>
                 {/* <h1 className="brand-name">WHORENY</h1> */}
                 <h2 className="tagline">The Alternative to Escorts.</h2>
-                <p className="description">Chat. Trade Nudes. Fuck Like Whores. That’s WhoreNy.</p>
+                <p className="description">Chat. Trade Nudes. Fuck Like Whores. That's WhoreNy.</p>
                 
                 <button
                   onClick={handleButtonClick}
@@ -204,7 +204,7 @@ useEffect(() => {
           <div className="banner-space">
             {/* Revive Adserver Asynchronous JS Tag */}
             <ins 
-              data-revive-zoneid="1" 
+              data-revive-zoneid="4" 
               data-revive-source="FooterWhoerny" 
               data-revive-id="8433fba3fad2328d20dd04454486c5ea"
             />
