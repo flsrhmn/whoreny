@@ -1,4 +1,5 @@
-// E:\FALIS\Torazzo\LandingPage\Dating\whoreny\src\app\page.tsx
+"use client";
+
 "use client";
 
 import { useState, useEffect, useRef, Suspense } from "react";
@@ -13,6 +14,7 @@ function EscortSideContent() {
   const [showBanner, setShowBanner] = useState(false);
   const idleTimerRef = useRef<NodeJS.Timeout | null>(null);
   const searchParams = useSearchParams();
+  const bannerLoadedRef = useRef(false);
 
   // Check URL parameters for header and banner
   useEffect(() => {
@@ -23,7 +25,7 @@ function EscortSideContent() {
     setShowBanner(bannerParam === 'yes');
   }, [searchParams]);
 
-  // Add this useEffect to load the ad script
+  // Load the ad script when showBanner becomes true
   useEffect(() => {
     if (showBanner) {
       const script = document.createElement('script');
@@ -43,21 +45,24 @@ function EscortSideContent() {
   // Rest of your existing code remains the same...
   // Check if device is mobile and set appropriate background
   useEffect(() => {
-    const checkIfMobile = () => {
-      const mobile = window.innerWidth < 768;
-      setIsMobile(mobile);
+  const checkIfMobile = () => {
+    const mobile = window.innerWidth < 768;
+    setIsMobile(mobile);
 
-      if (mobile) {
-        setBackgroundImage(`/escort/img1.jpg`);
-      } else {
-        setBackgroundImage("/escort/img-its1.jpg");
-      }
-    };
+    // Generate random number between 1 and 50
+    const randomImageNumber = Math.floor(Math.random() * 33) + 1;
 
-    checkIfMobile();
-    window.addEventListener("resize", checkIfMobile);
-    return () => window.removeEventListener("resize", checkIfMobile);
-  }, []);
+    if (mobile) {
+      setBackgroundImage(`/escort/mob/img${randomImageNumber}.jpg`);
+    } else {
+      setBackgroundImage(`/escort/desk/img${randomImageNumber}.jpg`);
+    }
+  };
+
+  checkIfMobile();
+  window.addEventListener("resize", checkIfMobile);
+  return () => window.removeEventListener("resize", checkIfMobile);
+}, []);
 
   // Idle redirect after 30 seconds
   useEffect(() => {
@@ -105,6 +110,10 @@ function EscortSideContent() {
 
   const handleButtonClick = () => {
     window.open('https://push.mobirealm.com/click', '_blank');
+  };
+
+  const getRandomNumber = () => {
+    return Math.floor(Math.random() * 999999999);
   };
 
   return (
@@ -202,12 +211,23 @@ function EscortSideContent() {
       {showBanner && (
         <footer className="banner-section">
           <div className="banner-space">
-            {/* Revive Adserver Asynchronous JS Tag */}
-            <ins 
-              data-revive-zoneid="4" 
-              data-revive-source="FooterWhoerny" 
-              data-revive-id="8433fba3fad2328d20dd04454486c5ea"
-            />
+            {/* Revive Adserver Image Tag */}
+            <a 
+              href={`https://adzone.adveroi.com/delivery/ck.php?n=a517340e&cb=${getRandomNumber()}`} 
+              target='_blank' 
+              rel='noopener noreferrer'
+            >
+              <img 
+                src={`https://adzone.adveroi.com/delivery/avw.php?zoneid=4&source=FooterWhoerny&cb=${getRandomNumber()}&n=a517340e`} 
+                alt='' 
+                style={{ 
+                  width: '350px', 
+                  height: '100px',
+                  display: 'block',
+                  margin: '0 auto'
+                }}
+              />
+            </a>
           </div>
           
           <div className="footer-content">
@@ -413,6 +433,10 @@ function EscortSideContent() {
           text-align: center;
           color: #666;
           border-bottom: 1px solid #e0e0e0;
+          min-height: 250px; /* Ensure enough space for banner */
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
 
         .footer-content {
@@ -429,10 +453,12 @@ function EscortSideContent() {
         }
 
         /* Responsive Design */
-        @media (max-width: 768px) {
-          .header-nav {
-            gap: 1rem;
+        @@media (max-width: 768px) {
+          .banner-space {
+            padding: 1.5rem;
+            min-height: 200px;
           }
+        }
           
           .nav-link {
             font-size: 0.8rem;
@@ -461,9 +487,11 @@ function EscortSideContent() {
         }
 
         @media (max-width: 480px) {
-          .header-content {
-            padding: 0 1rem;
+          .banner-space {
+            padding: 1rem;
+            min-height: 150px;
           }
+        }
           
           .header-nav {
             gap: 0.5rem;

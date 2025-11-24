@@ -9,8 +9,11 @@ function EscortFullContent() {
   const [isMobile, setIsMobile] = useState(false);
   const [showHeader, setShowHeader] = useState(false);
   const [showBanner, setShowBanner] = useState(false);
+  const [videoSource, setVideoSource] = useState("");
   const searchParams = useSearchParams();
   const idleTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const randomVideoRef = useRef<number>(0);
+  const bannerLoadedRef = useRef(false);
 
   // Check URL parameters for header and banner
   useEffect(() => {
@@ -20,6 +23,41 @@ function EscortFullContent() {
     setShowHeader(headerParam === 'yes');
     setShowBanner(bannerParam === 'yes');
   }, [searchParams]);
+
+  useEffect(() => {
+    if (showBanner) {
+      const script = document.createElement('script');
+      script.src = '//adzone.adveroi.com/delivery/asyncjs.php';
+      script.async = true;
+      document.body.appendChild(script);
+      
+      return () => {
+        // Cleanup: remove the script when component unmounts or showBanner changes
+        if (document.body.contains(script)) {
+          document.body.removeChild(script);
+        }
+      };
+    }
+  }, [showBanner]);
+
+  const getRandomNumber = () => {
+    return Math.floor(Math.random() * 999999999);
+  };
+
+  // Generate random video number and set video source based on device type
+  useEffect(() => {
+    // Generate random number only once between 1 and 5
+    if (randomVideoRef.current === 0) {
+      randomVideoRef.current = Math.floor(Math.random() * 5) + 1;
+    }
+    
+    const randomNumber = randomVideoRef.current;
+    const videoPath = isMobile 
+      ? `/escort/mob/gif${randomNumber}.mp4`
+      : `/escort/desk/gif${randomNumber}.mp4`;
+    
+    setVideoSource(videoPath);
+  }, [isMobile]); // Re-run when isMobile changes
 
   // Idle redirect after 30 seconds
   useEffect(() => {
@@ -97,16 +135,20 @@ function EscortFullContent() {
       <main className="main-content">
         {/* Background Video/Image */}
         <div className="video-container">
-          <video 
-            autoPlay 
-            loop 
-            muted 
-            playsInline 
-            className="background-video"
-            poster="/escort/gif1.mp4"
-          >
-            <source src="/escort/gif1.mp4" type="video/mp4" />
-          </video>
+          {videoSource && (
+            <video 
+              autoPlay 
+              loop 
+              muted 
+              playsInline 
+              className="background-video"
+              poster={videoSource}
+              key={videoSource} // Add key to force re-render when video source changes
+            >
+              <source src={videoSource} type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+          )}
           <div className="video-overlay"></div>
           
           {/* Logo - Top Left for Desktop, Center for Mobile */}
@@ -120,7 +162,6 @@ function EscortFullContent() {
                   className="logo-image"
                 />
               </div>
-            {/* <h1 className="logo-text">WHORENY</h1> */}
           </div>
 
           {/* Banner Content */}
@@ -151,7 +192,23 @@ function EscortFullContent() {
       {showBanner && (
         <footer className="banner-section">
           <div className="banner-space">
-            <p>Banner Space Available</p>
+            {/* Revive Adserver Image Tag */}
+            <a 
+              href={`https://adzone.adveroi.com/delivery/ck.php?n=a517340e&cb=${getRandomNumber()}`} 
+              target='_blank' 
+              rel='noopener noreferrer'
+            >
+              <img 
+                src={`https://adzone.adveroi.com/delivery/avw.php?zoneid=4&source=FooterWhoerny&cb=${getRandomNumber()}&n=a517340e`} 
+                alt='' 
+                style={{ 
+                  width: '350px', 
+                  height: '100px',
+                  display: 'block',
+                  margin: '0 auto'
+                }}
+              />
+            </a>
           </div>
           
           <div className="footer-content">
@@ -166,6 +223,7 @@ function EscortFullContent() {
         </footer>
       )}
 
+      {/* Rest of your styles remain the same */}
       <style jsx>{`
         .min-h-screen {
           min-height: 100vh;
