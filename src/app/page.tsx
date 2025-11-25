@@ -187,7 +187,7 @@ function EscortSideContent() {
                   </div>
                 {/* <h1 className="brand-name">WHORENY</h1> */}
                 <h2 className="tagline">The Alternative to Escorts.</h2>
-                <p className="description">Chat. Trade Nudes. Fuck Like Whores. That's WhoreNy.</p>
+                <p className="description">Chat. Trade Nudes. Fuck Like Whores. That&apos;s WhoreNy.</p>
                 
                 <button
                   onClick={handleButtonClick}
