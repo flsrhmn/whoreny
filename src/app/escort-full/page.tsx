@@ -5,6 +5,56 @@ import { useState, useEffect, useRef, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 
+// Content variations
+const TAGLINES = [
+  "Stop Swiping. Start Fucking.", 
+  "The App Where Sluts Come First.",
+  "Unleash Your Inner Whore.",
+  "Where Good Girls Come to Be Bad.",
+  "The End of Your Dry Spell.",
+  "No Games. Just Nudes and Hookups.",
+  "Get Laid Tonight. It's That Simple.",
+  "The Home for Horny Sluts.",
+  "Stop Being Horny. Start Getting Laid."
+];
+
+const DESCRIPTIONS = [
+  "Whore Mode: Activated",
+  "Proudly Whore. Insanely Horny.", 
+  "Where Whores and the Horny Finally Meet",
+  "Because Horny Was Too Subtle",
+  "Real Whores. Real Horny. Zero Apologies.",
+  "Chat. Trade Nudes. Fuck Like Whores. Thats WhoreNy.",
+  "100% Slut-Approved Hookups",
+  "Whore Mode: Activated",
+  "Horny People Fuck Here",
+  "Whores First. Feelings Never.",
+  "Get WhoreNy Tonight",
+  "Sluts Swipe Right"
+];
+
+const BUTTON_TEXTS = [
+  "FREE SIGNUP",
+  "Get Laid Now", 
+  "Unlock Your Matches",
+  "Start Fucking Tonight",
+  "Meet Horny Sluts",
+  "Trade Nudes Now",
+  "Get Instant Access",
+  "Begin Your Hookup",
+  "See Who's DTF",
+  "Join Free"
+];
+
+const BUTTON_COLORS = [
+  "eb4a90", // Pink
+  "8B5CF6", // Purple
+  "3B82F6", // Blue
+  "10B981", // Green
+  "F59E0B", // Amber
+  "EF4444"  // Red
+];
+
 function EscortFullContent() {
   const [isMobile, setIsMobile] = useState(false);
   const [showHeader, setShowHeader] = useState(false);
@@ -15,6 +65,15 @@ function EscortFullContent() {
   const randomVideoRef = useRef<number>(0);
   const bannerLoadedRef = useRef(false);
 
+  // State for randomized content
+  const [currentContent, setCurrentContent] = useState({
+    tagline: "",
+    description: "",
+    buttonText: "",
+    buttonColor: "",
+    imageNumber: 0
+  });
+
   // Check URL parameters for header and banner
   useEffect(() => {
     const headerParam = searchParams.get('header');
@@ -23,6 +82,23 @@ function EscortFullContent() {
     setShowHeader(headerParam === 'yes');
     setShowBanner(bannerParam === 'yes');
   }, [searchParams]);
+
+  // Initialize randomized content
+    useEffect(() => {
+      const randomTagline = TAGLINES[Math.floor(Math.random() * TAGLINES.length)];
+      const randomDescription = DESCRIPTIONS[Math.floor(Math.random() * DESCRIPTIONS.length)];
+      const randomButtonText = BUTTON_TEXTS[Math.floor(Math.random() * BUTTON_TEXTS.length)];
+      const randomButtonColor = BUTTON_COLORS[Math.floor(Math.random() * BUTTON_COLORS.length)];
+      const randomImageNumber = Math.floor(Math.random() * 33) + 1;
+  
+      setCurrentContent({
+        tagline: randomTagline,
+        description: randomDescription,
+        buttonText: randomButtonText,
+        buttonColor: randomButtonColor,
+        imageNumber: randomImageNumber
+      });
+    }, []);
 
   useEffect(() => {
     if (showBanner) {
@@ -103,6 +179,48 @@ function EscortFullContent() {
     };
   }, []);
 
+  const handleJoinFree = () => {
+    // Construct URL with current content as parameters
+    const baseUrl = 'https://push.mobirealm.com/db065b00-32dc-483d-b115-31c319bc064d';
+    const params = new URLSearchParams({
+      subid: currentContent.tagline,
+      adzone: currentContent.description,
+      site: `img${currentContent.imageNumber}.jpg`,
+      campaign: currentContent.buttonText,
+    });
+    
+    const finalUrl = `${baseUrl}?${params.toString()}&banner=${currentContent.buttonColor}&Sourceid=027`;
+    window.open(finalUrl);
+  };
+
+  const handleTiktokGirls = () => {
+    // Construct URL with current content as parameters
+    const baseUrl = 'https://push.mobirealm.com/93ac51fa-3abe-4861-a6bb-2dde380e2256';
+    const params = new URLSearchParams({
+      subid: currentContent.tagline,
+      adzone: currentContent.description,
+      site: `img${currentContent.imageNumber}.jpg`,
+      campaign: currentContent.buttonText,
+    });
+    
+    const finalUrlTiktok = `${baseUrl}?${params.toString()}&banner=${currentContent.buttonColor}&Sourceid=027`;
+    window.open(finalUrlTiktok);
+  };
+
+  const handleAdultGames = () => {
+    // Construct URL with current content as parameters
+    const baseUrl = 'https://push.mobirealm.com/0ba7ea6b-d362-4703-a32f-2616b3bb7461';
+    const params = new URLSearchParams({
+      subid: currentContent.tagline,
+      adzone: currentContent.description,
+      site: `img${currentContent.imageNumber}.jpg`,
+      campaign: currentContent.buttonText,
+    });
+    
+    const finalUrlAdultGames = `${baseUrl}?${params.toString()}&banner=${currentContent.buttonColor}&Sourceid=027`;
+    window.open(finalUrlAdultGames);
+  };
+
   useEffect(() => {
     const checkIfMobile = () => {
       setIsMobile(window.innerWidth < 768);
@@ -113,10 +231,6 @@ function EscortFullContent() {
     return () => window.removeEventListener("resize", checkIfMobile);
   }, []);
 
-  const handleJoinFree = () => {
-    window.location.href = 'https://push.mobirealm.com/click';
-  };
-
   return (
     <div className="min-h-screen flex flex-col">
       {/* Header with text links - conditionally rendered */}
@@ -124,9 +238,8 @@ function EscortFullContent() {
         <header className="header">
           <div className="header-content">
             <nav className="header-nav">
-              <a href="https://push.mobirealm.com/93ac51fa-3abe-4861-a6bb-2dde380e2256?subid={sub.id}&adzone={adzone}&site={site}&campaign={campaign}&banner={banner}&email={email}&Sourceid=027&cost={cost}&conversion={conversion}" className="nav-link" target="_blank" rel="noopener noreferrer">Tiktok Girls</a>
-              <a href="https://push.mobirealm.com/0ba7ea6b-d362-4703-a32f-2616b3bb7461?subid={sub.id}&adzone={adzone}&site={site}&campaign={campaign}&banner={banner}&email={email}&Sourceid=027&cost={cost}&conversion={conversion}
-" className="nav-link" target="_blank" rel="noopener noreferrer">Adult Games</a>
+              <a href="#" onClick={handleTiktokGirls} style={{color: 'white'}}>Tiktok Girls</a>
+              <a href="#" onClick={handleAdultGames} style={{color: 'white'}}>Adult Games</a>
             </nav>
           </div>
         </header>
@@ -176,7 +289,8 @@ function EscortFullContent() {
             <footer className="cta-section">
               <button
                 onClick={handleJoinFree}
-                className="join-button"
+                  className="cta-button"
+                  style={{ backgroundColor: `#${currentContent.buttonColor}` }}
               >
                 Join Free
               </button>
