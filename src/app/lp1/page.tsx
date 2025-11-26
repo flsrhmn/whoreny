@@ -4,75 +4,23 @@ import { useState, useEffect, useRef, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 
-// Content variations
-const TAGLINES = [
-  "Stop Swiping. Start Fucking.", 
-  "The App Where Sluts Come First.",
-  "Unleash Your Inner Whore.",
-  "Where Good Girls Come to Be Bad.",
-  "The End of Your Dry Spell.",
-  "No Games. Just Nudes and Hookups.",
-  "Get Laid Tonight. It's That Simple.",
-  "The Home for Horny Sluts.",
-  "Stop Being Horny. Start Getting Laid."
-];
-
-const DESCRIPTIONS = [
-  "Whore Mode: Activated",
-  "Proudly Whore. Insanely Horny.", 
-  "Where Whores and the Horny Finally Meet",
-  "Because Horny Was Too Subtle",
-  "Real Whores. Real Horny. Zero Apologies.",
-  "Chat. Trade Nudes. Fuck Like Whores. Thats WhoreNy.",
-  "100% Slut-Approved Hookups",
-  "Whore Mode: Activated",
-  "Horny People Fuck Here",
-  "Whores First. Feelings Never.",
-  "Get WhoreNy Tonight",
-  "Sluts Swipe Right"
-];
-
-const BUTTON_TEXTS = [
-  "FREE SIGNUP",
-  "Get Laid Now", 
-  "Unlock Your Matches",
-  "Start Fucking Tonight",
-  "Meet Horny Sluts",
-  "Trade Nudes Now",
-  "Get Instant Access",
-  "Begin Your Hookup",
-  "See Who's DTF",
-  "Join Free"
-];
-
-const BUTTON_COLORS = [
-  "eb4a90", // Pink
-  "8B5CF6", // Purple
-  "3B82F6", // Blue
-  "10B981", // Green
-  "F59E0B", // Amber
-  "EF4444"  // Red
-];
-
 // Create a separate component for the content that uses useSearchParams
 function EscortSideContent() {
   const [isMobile, setIsMobile] = useState(false);
   const [backgroundImage, setBackgroundImage] = useState("");
   const [showHeader, setShowHeader] = useState(false);
   const [showBanner, setShowBanner] = useState(false);
-  
-  // State for randomized content
-  const [currentContent, setCurrentContent] = useState({
-    tagline: "",
-    description: "",
-    buttonText: "",
-    buttonColor: "",
-    imageNumber: 0
-  });
-
   const idleTimerRef = useRef<NodeJS.Timeout | null>(null);
   const searchParams = useSearchParams();
   const bannerLoadedRef = useRef(false);
+
+  const [currentContent] = useState({
+    tagline: "The Alternative to Escorts.",
+    description: "We are not whores - Just Horny",
+    buttonText: " FREE SIGNUP",
+    buttonColor: "#eb4a90",
+    imageNumber: 0
+  });
 
   // Check URL parameters for header and banner
   useEffect(() => {
@@ -82,23 +30,6 @@ function EscortSideContent() {
     setShowHeader(headerParam === 'yes');
     setShowBanner(bannerParam === 'yes');
   }, [searchParams]);
-
-  // Initialize randomized content
-  useEffect(() => {
-    const randomTagline = TAGLINES[Math.floor(Math.random() * TAGLINES.length)];
-    const randomDescription = DESCRIPTIONS[Math.floor(Math.random() * DESCRIPTIONS.length)];
-    const randomButtonText = BUTTON_TEXTS[Math.floor(Math.random() * BUTTON_TEXTS.length)];
-    const randomButtonColor = BUTTON_COLORS[Math.floor(Math.random() * BUTTON_COLORS.length)];
-    const randomImageNumber = Math.floor(Math.random() * 33) + 1;
-
-    setCurrentContent({
-      tagline: randomTagline,
-      description: randomDescription,
-      buttonText: randomButtonText,
-      buttonColor: randomButtonColor,
-      imageNumber: randomImageNumber
-    });
-  }, []);
 
   // Load the ad script when showBanner becomes true
   useEffect(() => {
@@ -117,119 +48,113 @@ function EscortSideContent() {
     }
   }, [showBanner]);
 
+  // Rest of your existing code remains the same...
   // Check if device is mobile and set appropriate background
   useEffect(() => {
-    const checkIfMobile = () => {
-      const mobile = window.innerWidth < 768;
-      setIsMobile(mobile);
+  const checkIfMobile = () => {
+    const mobile = window.innerWidth < 768;
+    setIsMobile(mobile);
 
-      if (mobile) {
-        setBackgroundImage(`/escort/mob/img${currentContent.imageNumber}.jpg`);
-      } else {
-        setBackgroundImage(`/escort/desk/img${currentContent.imageNumber}.jpg`);
-      }
-    };
+    // Generate random number between 1 and 50
+    const randomImageNumber = Math.floor(Math.random() * 33) + 1;
 
-    checkIfMobile();
-    window.addEventListener("resize", checkIfMobile);
-    return () => window.removeEventListener("resize", checkIfMobile);
-  }, [currentContent.imageNumber]);
-
-  // Update background image when image number changes
-  useEffect(() => {
-    if (currentContent.imageNumber) {
-      if (isMobile) {
-        setBackgroundImage(`/escort/mob/img${currentContent.imageNumber}.jpg`);
-      } else {
-        setBackgroundImage(`/escort/desk/img${currentContent.imageNumber}.jpg`);
-      }
+    if (mobile) {
+      setBackgroundImage(`/escort/mob/img${randomImageNumber}.jpg`);
+    } else {
+      setBackgroundImage(`/escort/desk/img${randomImageNumber}.jpg`);
     }
-  }, [currentContent.imageNumber, isMobile]);
+  };
+
+  checkIfMobile();
+  window.addEventListener("resize", checkIfMobile);
+  return () => window.removeEventListener("resize", checkIfMobile);
+}, []);
 
   // Idle redirect after 30 seconds
   useEffect(() => {
-    const resetIdleTimer = () => {
-      if (idleTimerRef.current) {
-        clearTimeout(idleTimerRef.current);
-      }
-      
-      idleTimerRef.current = setTimeout(() => {
-        window.open('https://push.mobirealm.com/3abf5600-d599-423a-b330-b5ba33b5df56?ads=ads&creative=default&domain=whoerny&source=whoerny&subsource=default-page&Sourceid=025 ', '_blank');
-      }, 30000);
-    };
-
-    const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'];
+  const resetIdleTimer = () => {
+    if (idleTimerRef.current) {
+      clearTimeout(idleTimerRef.current);
+    }
     
+    idleTimerRef.current = setTimeout(() => {
+      // Only proceed if content is loaded
+      if (!currentContent.tagline || !currentContent.buttonColor) {
+        console.log('Content not loaded for idle redirect');
+        return;
+      }
+
+      // Construct URL with current content as parameters
+      const baseUrl = 'https://push.mobirealm.com/3abf5600-d599-423a-b330-b5ba33b5df56';
+      const params = new URLSearchParams({
+        sub1:"lp1",
+        ads: currentContent.tagline,
+        creative: currentContent.description,
+        domain: `img${currentContent.imageNumber}.jpg`,
+        source: currentContent.buttonText,
+      });
+
+      const finalidle = `${baseUrl}?${params.toString()}&subsource=${currentContent.buttonColor}&Sourceid=025&clickid={click_id}`;
+      window.open(finalidle);
+    }, 30000);
+  };
+
+  const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'];
+  
+  events.forEach(event => {
+    document.addEventListener(event, resetIdleTimer);
+  });
+
+  resetIdleTimer();
+
+  return () => {
+    if (idleTimerRef.current) {
+      clearTimeout(idleTimerRef.current);
+    }
     events.forEach(event => {
-      document.addEventListener(event, resetIdleTimer);
+      document.removeEventListener(event, resetIdleTimer);
+    });
+  };
+}, [currentContent]);
+
+  // Back button handling
+  const handleBackButton = () => {
+    // Construct URL with current content as parameters
+    const baseUrl = 'https://push.mobirealm.com/250f31d4-e371-41a4-bf89-f534726eea27';
+    const params = new URLSearchParams({
+      source: currentContent.tagline,
+      s1: currentContent.description,
+      s2: `img${currentContent.imageNumber}.jpg`,
+      s3: currentContent.buttonText,
+      email:"lp1"
     });
 
-    resetIdleTimer();
-
-    return () => {
-      if (idleTimerRef.current) {
-        clearTimeout(idleTimerRef.current);
-      }
-      events.forEach(event => {
-        document.removeEventListener(event, resetIdleTimer);
-      });
-    };
-  }, []);
+    const finalUrlBackButton = `${baseUrl}?${params.toString()}&s4=${currentContent.buttonColor}&Sourceid=026&clickid={click_id}`;
+    window.location.href = finalUrlBackButton;
+  };
 
   // Back button handling
   useEffect(() => {
-    const handlePopState = () => {
-      window.location.href = 'https://push.mobirealm.com/250f31d4-e371-41a4-bf89-f534726eea27?source=whoreny&s1=default&s2=BB&email={email}&sourceid=026&cost={cost}&clickid={click_id}';
-    };
+  const handlePopState = () => {
+    // Only proceed if content is loaded
+    if (!currentContent.tagline || !currentContent.buttonColor) {
+      console.log('Content not loaded for back button');
+      return;
+    }
+    handleBackButton();
+  };
 
-    window.addEventListener('popstate', handlePopState);
-    window.history.pushState({ page: 'escort-side' }, '', window.location.href);
 
-    return () => {
-      window.removeEventListener('popstate', handlePopState);
-    };
-  }, []);
+  window.addEventListener('popstate', handlePopState);
+  window.history.pushState({ page: 'escort-side' }, '', '');
+
+  return () => {
+    window.removeEventListener('popstate', handlePopState);
+  };
+}, [currentContent]);
 
   const handleButtonClick = () => {
-    // Construct URL with current content as parameters
-    const baseUrl = 'https://push.mobirealm.com/db065b00-32dc-483d-b115-31c319bc064d';
-    const params = new URLSearchParams({
-      subid: currentContent.tagline,
-      adzone: currentContent.description,
-      site: `img${currentContent.imageNumber}.jpg`,
-      campaign: currentContent.buttonText,
-    });
-    
-    const finalUrl = `${baseUrl}?${params.toString()}&banner=${currentContent.buttonColor}&Sourceid=027`;
-    window.open(finalUrl);
-  };
-
-  const handleTiktokGirls = () => {
-    // Construct URL with current content as parameters
-    const baseUrl = 'https://push.mobirealm.com/93ac51fa-3abe-4861-a6bb-2dde380e2256';
-    const params = new URLSearchParams({
-      subid: currentContent.tagline,
-      adzone: currentContent.description,
-      site: `img${currentContent.imageNumber}.jpg`,
-      campaign: currentContent.buttonText,
-    });
-    
-    const finalUrlTiktok = `${baseUrl}?${params.toString()}&banner=${currentContent.buttonColor}&Sourceid=027`;
-    window.open(finalUrlTiktok);
-  };
-
-  const handleAdultGames = () => {
-    // Construct URL with current content as parameters
-    const baseUrl = 'https://push.mobirealm.com/0ba7ea6b-d362-4703-a32f-2616b3bb7461';
-    const params = new URLSearchParams({
-      subid: currentContent.tagline,
-      adzone: currentContent.description,
-      site: `img${currentContent.imageNumber}.jpg`,
-      campaign: currentContent.buttonText,
-    });
-    
-    const finalUrlAdultGames = `${baseUrl}?${params.toString()}&banner=${currentContent.buttonColor}&Sourceid=027`;
-    window.open(finalUrlAdultGames);
+    window.open('https://push.mobirealm.com/click', '_blank');
   };
 
   const getRandomNumber = () => {
@@ -243,8 +168,10 @@ function EscortSideContent() {
         <header className="header">
           <div className="header-content">
             <nav className="header-nav">
-              <a href="#" onClick={handleTiktokGirls} style={{color: 'white'}}>Tiktok Girls</a>
-              <a href="#" onClick={handleAdultGames} style={{color: 'white'}}>Adult Games</a>
+              <a href="https://push.mobirealm.com/93ac51fa-3abe-4861-a6bb-2dde380e2256?subid={sub.id}&adzone={adzone}&site={site}&campaign={campaign}&banner={banner}&email={email}&Sourceid=027&cost={cost}&conversion={conversion}
+" className="nav-link" target="_blank" rel="noopener noreferrer">Tiktok Girls</a>
+              <a href="https://push.mobirealm.com/0ba7ea6b-d362-4703-a32f-2616b3bb7461?subid={sub.id}&adzone={adzone}&site={site}&campaign={campaign}&banner={banner}&email={email}&Sourceid=027&cost={cost}&conversion={conversion}
+" className="nav-link" target="_blank" rel="noopener noreferrer">Adult Games</a>
             </nav>
           </div>
         </header>
@@ -263,7 +190,9 @@ function EscortSideContent() {
             
             <div className="content-section">
               <div className="text-content">
+                    
                 <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "1rem" }}>
+                  {/* <h1 className="brand-name">WHORENY</h1> */}
                   <div className="logo-section">
                     <Image 
                       src={isMobile ? "/logo-mob.png" : "/logo-desk.png"} 
@@ -293,15 +222,16 @@ function EscortSideContent() {
           <div className="desktop-layout">
             <div className="left-section">
               <div className="text-content">
-                <div className="logo-section">
-                  <Image 
-                    src={isMobile ? "/logo-mob.png" : "/logo-desk.png"} 
-                    alt="whoreny Logo" 
-                    width={isMobile ? 220 : 550}
-                    height={isMobile ? 42 : 105}
-                    className="logo-image"
-                  />
-                </div>
+                  <div className="logo-section">
+                    <Image 
+                      src={isMobile ? "/logo-mob.png" : "/logo-desk.png"} 
+                      alt="whoreny Logo" 
+                      width={isMobile ? 220 : 550}
+                      height={isMobile ? 42 : 105}
+                      className="logo-image"
+                    />
+                  </div>
+                {/* <h1 className="brand-name">WHORENY</h1> */}
                 <h2 className="tagline">{currentContent.tagline}</h2>
                 <p className="description">{currentContent.description}</p>
                 
@@ -509,6 +439,7 @@ function EscortSideContent() {
 
         /* CTA Button */
         .cta-button {
+          background-color: #eb4a90;
           color: white;
           font-weight: bold;
           padding: 1rem 2rem;
@@ -522,8 +453,9 @@ function EscortSideContent() {
         }
 
         .cta-button:hover {
+          background-color: #d43a80;
           transform: translateY(-2px);
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+          box-shadow: 0 4px 12px rgba(235, 74, 144, 0.3);
         }
 
         /* Background Image */
@@ -568,11 +500,12 @@ function EscortSideContent() {
         }
 
         /* Responsive Design */
-        @media (max-width: 768px) {
+        @@media (max-width: 768px) {
           .banner-space {
             padding: 1.5rem;
             min-height: 200px;
           }
+        }
           
           .nav-link {
             font-size: 0.8rem;
@@ -605,6 +538,7 @@ function EscortSideContent() {
             padding: 1rem;
             min-height: 150px;
           }
+        }
           
           .header-nav {
             gap: 0.5rem;
