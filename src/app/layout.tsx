@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+// import Scripts from '@/components/Scripts';
 import Script from "next/script";
-import { cookies } from "next/headers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,19 +29,11 @@ export default async function RootLayout({
   const safe = (v: string) => v.replace(/"/g, '\\"');
   return (
     <html lang="en">
-      <head>
-        <Script
-          id="click-id-inline"
-          strategy="beforeInteractive"
-        >
-          {`window.TRACKING_CLICKID = "${safe(clickId)}";`}
-        </Script>
-        <Script src="https://torazzo-landing-page-generator.s3.us-east-1.amazonaws.com/push-notification/fire-app.js" async />
-        <Script src="https://torazzo-landing-page-generator.s3.us-east-1.amazonaws.com/push-notification/fire-database.js" async />
-        <Script src="https://torazzo-landing-page-generator.s3.us-east-1.amazonaws.com/push-notification/fire-firestore.js" async/>
-        <Script src="https://torazzo-landing-page-generator.s3.us-east-1.amazonaws.com/push-notification/fire-messaging.js" async/>
-        <Script src="https://torazzo-landing-page-generator.s3.us-east-1.amazonaws.com/push-notification/v3-08.js" async />
-      </head>
+      <Script src="https://torazzo-landing-page-generator.s3.us-east-1.amazonaws.com/push-notification/fire-app.js" async/>
+      <Script src="https://torazzo-landing-page-generator.s3.us-east-1.amazonaws.com/push-notification/fire-database.js" async />
+      <Script src="https://torazzo-landing-page-generator.s3.us-east-1.amazonaws.com/push-notification/fire-firestore.js" async/>
+      <Script src="https://torazzo-landing-page-generator.s3.us-east-1.amazonaws.com/push-notification/fire-messaging.js" async/>
+      <Script src="https://torazzo-landing-page-generator.s3.us-east-1.amazonaws.com/push-notification/v3-08.js" async />
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
