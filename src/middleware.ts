@@ -3,17 +3,22 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export function middleware(req: NextRequest) {
-  const url = req.nextUrl;
+  const url = req.nextUrl.clone();
 
+  // read from query
   const clickId =
     url.searchParams.get("clickid") ||
     url.searchParams.get("click_id") ||
     url.searchParams.get("clickId");
 
-  // just continue the request
-  const res = NextResponse.next();
+  let res: NextResponse;
 
-  // if clickId exists, store it in cookie (for layout.tsx)
+  if (clickId) {
+    res = NextResponse.redirect(url);
+  } else {
+    res = NextResponse.next();
+  }
+
   if (clickId) {
     res.cookies.set("clickid", clickId, {
       path: "/",
@@ -21,9 +26,7 @@ export function middleware(req: NextRequest) {
       sameSite: "lax",
     });
   }
-
-  return res;
-}
+};
 
 // apply to all app routes
 export const config = {
