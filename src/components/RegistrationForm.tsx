@@ -43,17 +43,17 @@ export default function RegistrationForm({ onComplete }: RegistrationFormProps) 
           return false;
         }
         return true;
+      // case 4:
+      //   if (!formData.password) {
+      //     setErrors("Please enter a password");
+      //     return false;
+      //   }
+      //   if (formData.password.length < 6 || formData.password.length > 12) {
+      //     setErrors("Password must be between 6 and 12 characters");
+      //     return false;
+      //   }
+      //   return true;
       case 4:
-        if (!formData.password) {
-          setErrors("Please enter a password");
-          return false;
-        }
-        if (formData.password.length < 6 || formData.password.length > 12) {
-          setErrors("Password must be between 6 and 12 characters");
-          return false;
-        }
-        return true;
-      case 5:
         if (!formData.email) {
           setErrors("Please enter your email");
           return false;
@@ -72,7 +72,7 @@ export default function RegistrationForm({ onComplete }: RegistrationFormProps) 
 
   const handleNext = () => {
     if (validateStep()) {
-      if (currentStep < 5) {
+      if (currentStep < 4) {
         setCurrentStep(currentStep + 1);
       } else {
         onComplete(formData);
