@@ -26,7 +26,7 @@ function EscortSideContent() {
   useEffect(() => {
     const headerParam = searchParams.get('header');
     const bannerParam = searchParams.get('banner');
-    
+
     setShowHeader(headerParam === 'yes');
     setShowBanner(bannerParam === 'yes');
   }, [searchParams]);
@@ -38,7 +38,7 @@ function EscortSideContent() {
       script.src = '//adzone.adveroi.com/delivery/asyncjs.php';
       script.async = true;
       document.body.appendChild(script);
-      
+
       return () => {
         // Cleanup: remove the script when component unmounts or showBanner changes
         if (document.body.contains(script)) {
@@ -51,71 +51,71 @@ function EscortSideContent() {
   // Rest of your existing code remains the same...
   // Check if device is mobile and set appropriate background
   useEffect(() => {
-  const checkIfMobile = () => {
-    const mobile = window.innerWidth < 768;
-    setIsMobile(mobile);
+    const checkIfMobile = () => {
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
 
-    // Generate random number between 1 and 50
-    const randomImageNumber = Math.floor(Math.random() * 33) + 1;
+      // Generate random number between 1 and 50
+      const randomImageNumber = Math.floor(Math.random() * 33) + 1;
 
-    if (mobile) {
-      setBackgroundImage(`/escort/mob/img${randomImageNumber}.jpg`);
-    } else {
-      setBackgroundImage(`/escort/desk/img${randomImageNumber}.jpg`);
-    }
-  };
+      if (mobile) {
+        setBackgroundImage(`/escort/mob/img${randomImageNumber}.jpg`);
+      } else {
+        setBackgroundImage(`/escort/desk/img${randomImageNumber}.jpg`);
+      }
+    };
 
-  checkIfMobile();
-  window.addEventListener("resize", checkIfMobile);
-  return () => window.removeEventListener("resize", checkIfMobile);
-}, []);
+    checkIfMobile();
+    window.addEventListener("resize", checkIfMobile);
+    return () => window.removeEventListener("resize", checkIfMobile);
+  }, []);
 
   // Idle redirect after 30 seconds
   useEffect(() => {
-  const resetIdleTimer = () => {
-    if (idleTimerRef.current) {
-      clearTimeout(idleTimerRef.current);
-    }
-    
-    idleTimerRef.current = setTimeout(() => {
-      // Only proceed if content is loaded
-      if (!currentContent.tagline || !currentContent.buttonColor) {
-        console.log('Content not loaded for idle redirect');
-        return;
+    const resetIdleTimer = () => {
+      if (idleTimerRef.current) {
+        clearTimeout(idleTimerRef.current);
       }
 
-      // Construct URL with current content as parameters
-      const baseUrl = 'https://push.mobirealm.com/3abf5600-d599-423a-b330-b5ba33b5df56';
-      const params = new URLSearchParams({
-        sub1:"lp1",
-        ads: currentContent.tagline,
-        creative: currentContent.description,
-        domain: `img${currentContent.imageNumber}.jpg`,
-        source: currentContent.buttonText,
-      });
+      idleTimerRef.current = setTimeout(() => {
+        // Only proceed if content is loaded
+        if (!currentContent.tagline || !currentContent.buttonColor) {
+          console.log('Content not loaded for idle redirect');
+          return;
+        }
 
-      const finalidle = `${baseUrl}?${params.toString()}&subsource=${currentContent.buttonColor}&Sourceid=025&clickid={click_id}`;
-      window.open(finalidle);
-    }, 30000);
-  };
+        // Construct URL with current content as parameters
+        const baseUrl = 'https://push.mobirealm.com/3abf5600-d599-423a-b330-b5ba33b5df56';
+        const params = new URLSearchParams({
+          sub1: "lp1",
+          ads: currentContent.tagline,
+          creative: currentContent.description,
+          domain: `img${currentContent.imageNumber}.jpg`,
+          source: currentContent.buttonText,
+        });
 
-  const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'];
-  
-  events.forEach(event => {
-    document.addEventListener(event, resetIdleTimer);
-  });
+        const finalidle = `${baseUrl}?${params.toString()}&subsource=${currentContent.buttonColor}&Sourceid=025&clickid={click_id}`;
+        window.open(finalidle);
+      }, 30000);
+    };
 
-  resetIdleTimer();
+    const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'];
 
-  return () => {
-    if (idleTimerRef.current) {
-      clearTimeout(idleTimerRef.current);
-    }
     events.forEach(event => {
-      document.removeEventListener(event, resetIdleTimer);
+      document.addEventListener(event, resetIdleTimer);
     });
-  };
-}, [currentContent]);
+
+    resetIdleTimer();
+
+    return () => {
+      if (idleTimerRef.current) {
+        clearTimeout(idleTimerRef.current);
+      }
+      events.forEach(event => {
+        document.removeEventListener(event, resetIdleTimer);
+      });
+    };
+  }, [currentContent]);
 
   // Back button handling
   const handleBackButton = () => {
@@ -126,7 +126,7 @@ function EscortSideContent() {
       s1: currentContent.description,
       s2: `img${currentContent.imageNumber}.jpg`,
       s3: currentContent.buttonText,
-      email:"lp1"
+      email: "lp1"
     });
 
     const finalUrlBackButton = `${baseUrl}?${params.toString()}&s4=${currentContent.buttonColor}&Sourceid=026&clickid={click_id}`;
@@ -135,26 +135,26 @@ function EscortSideContent() {
 
   // Back button handling
   useEffect(() => {
-  const handlePopState = () => {
-    // Only proceed if content is loaded
-    if (!currentContent.tagline || !currentContent.buttonColor) {
-      console.log('Content not loaded for back button');
-      return;
-    }
-    handleBackButton();
-  };
+    const handlePopState = () => {
+      // Only proceed if content is loaded
+      if (!currentContent.tagline || !currentContent.buttonColor) {
+        console.log('Content not loaded for back button');
+        return;
+      }
+      handleBackButton();
+    };
 
 
-  window.addEventListener('popstate', handlePopState);
-  window.history.pushState({ page: 'escort-side' }, '', '');
+    window.addEventListener('popstate', handlePopState);
+    window.history.pushState({ page: 'escort-side' }, '', '');
 
-  return () => {
-    window.removeEventListener('popstate', handlePopState);
-  };
-}, [currentContent]);
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [currentContent]);
 
   const handleButtonClick = () => {
-    window.open('https://push.mobirealm.com/click', '_blank');
+    window.location.href = 'https://push.mobirealm.com/click';
   };
 
   const getRandomNumber = () => {
@@ -182,31 +182,31 @@ function EscortSideContent() {
           // Mobile layout: image on top, content below
           <div className="mobile-layout">
             <div className="image-section">
-              <div 
+              <div
                 className="background-image"
                 style={{ backgroundImage: `url(${backgroundImage})` }}
               />
             </div>
-            
+
             <div className="content-section">
               <div className="text-content">
-                    
+
                 <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "1rem" }}>
                   {/* <h1 className="brand-name">WHORENY</h1> */}
                   <div className="logo-section">
-                    <Image 
-                      src={isMobile ? "/logo-mob.png" : "/logo-desk.png"} 
-                      alt="whoreny Logo" 
+                    <Image
+                      src={isMobile ? "/logo-mob.png" : "/logo-desk.png"}
+                      alt="whoreny Logo"
                       width={isMobile ? 220 : 550}
                       height={isMobile ? 42 : 105}
                       className="logo-image"
-                      style={{alignItems: "center"}}
+                      style={{ alignItems: "center" }}
                     />
                   </div>
                 </div>
                 <h2 className="tagline">{currentContent.tagline}</h2>
                 <p className="description">{currentContent.description}</p>
-                
+
                 <button
                   onClick={handleButtonClick}
                   className="cta-button"
@@ -222,19 +222,19 @@ function EscortSideContent() {
           <div className="desktop-layout">
             <div className="left-section">
               <div className="text-content">
-                  <div className="logo-section">
-                    <Image 
-                      src={isMobile ? "/logo-mob.png" : "/logo-desk.png"} 
-                      alt="whoreny Logo" 
-                      width={isMobile ? 220 : 550}
-                      height={isMobile ? 42 : 105}
-                      className="logo-image"
-                    />
-                  </div>
+                <div className="logo-section">
+                  <Image
+                    src={isMobile ? "/logo-mob.png" : "/logo-desk.png"}
+                    alt="whoreny Logo"
+                    width={isMobile ? 220 : 550}
+                    height={isMobile ? 42 : 105}
+                    className="logo-image"
+                  />
+                </div>
                 {/* <h1 className="brand-name">WHORENY</h1> */}
                 <h2 className="tagline">{currentContent.tagline}</h2>
                 <p className="description">{currentContent.description}</p>
-                
+
                 <button
                   onClick={handleButtonClick}
                   className="cta-button"
@@ -245,7 +245,7 @@ function EscortSideContent() {
               </div>
             </div>
             <div className="right-section">
-              <div 
+              <div
                 className="background-image"
                 style={{ backgroundImage: `url(${backgroundImage})` }}
               />
@@ -259,16 +259,16 @@ function EscortSideContent() {
         <footer className="banner-section">
           <div className="banner-space">
             {/* Revive Adserver Image Tag */}
-            <a 
-              href={`https://adzone.adveroi.com/delivery/ck.php?n=a517340e&cb=${getRandomNumber()}`} 
-              target='_blank' 
+            <a
+              href={`https://adzone.adveroi.com/delivery/ck.php?n=a517340e&cb=${getRandomNumber()}`}
+              target='_blank'
               rel='noopener noreferrer'
             >
-              <img 
-                src={`https://adzone.adveroi.com/delivery/avw.php?zoneid=4&source=FooterWhoerny&cb=${getRandomNumber()}&n=a517340e`} 
-                alt='' 
-                style={{ 
-                  width: '350px', 
+              <img
+                src={`https://adzone.adveroi.com/delivery/avw.php?zoneid=4&source=FooterWhoerny&cb=${getRandomNumber()}&n=a517340e`}
+                alt=''
+                style={{
+                  width: '350px',
                   height: '100px',
                   display: 'block',
                   margin: '0 auto'
@@ -276,7 +276,7 @@ function EscortSideContent() {
               />
             </a>
           </div>
-          
+
           <div className="footer-content">
             <p className="footer-disclaimer">
               © 2025 Whoreny.com, All rights reserved. Disclaimer: This website
