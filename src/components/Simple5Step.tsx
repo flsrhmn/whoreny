@@ -9,70 +9,63 @@ interface RegistrationFormProps {
 interface FormData {
   gender: string;
   partnerGender: string;
-  zipcode: string;
-  password: string;
-  email: string;
+  age: string;
+  connect: string;
+  type: string;
 }
 
 export default function RegistrationForm({ onComplete }: RegistrationFormProps) {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<FormData>({
-    gender: "Man",
-    partnerGender: "Woman",
-    zipcode: "",
-    password: "",
-    email: "",
+    gender: "",
+    partnerGender: "",
+    age: "",
+    connect: "",
+    type: "",
   });
   const [errors, setErrors] = useState<string>("");
 
   const validateStep = (): boolean => {
     setErrors("");
 
+    let isValid = false;
+    let errorMessage = "";
+
     switch (currentStep) {
       case 1:
-        return !!formData.gender;
+        isValid = !!formData.gender;
+        errorMessage = "Please select your gender";
+        break;
       case 2:
-        return !!formData.partnerGender;
+        isValid = !!formData.partnerGender;
+        errorMessage = "Please select who you're looking for";
+        break;
       case 3:
-        if (!formData.zipcode) {
-          setErrors("Please enter your zipcode");
-          return false;
-        }
-        if (!/^\d+$/.test(formData.zipcode)) {
-          setErrors("Zipcode must contain only numbers");
-          return false;
-        }
-        return true;
-      // case 4:
-      //   if (!formData.password) {
-      //     setErrors("Please enter a password");
-      //     return false;
-      //   }
-      //   if (formData.password.length < 6 || formData.password.length > 12) {
-      //     setErrors("Password must be between 6 and 12 characters");
-      //     return false;
-      //   }
-      //   return true;
+        isValid = !!formData.age;
+        errorMessage = "Please select your age range";
+        break;
       case 4:
-        if (!formData.email) {
-          setErrors("Please enter your email");
-          return false;
-        }
-        const validDomains = ["@gmail.com", "@outlook.com", "@yahoo.com", "@aol.com"];
-        const isValidDomain = validDomains.some(domain => formData.email.toLowerCase().endsWith(domain));
-        if (!isValidDomain) {
-          setErrors("Your Email is Not Valid");
-          return false;
-        }
-        return true;
+        isValid = !!formData.connect;
+        errorMessage = "Please select how you want to connect";
+        break;
+      case 5:
+        isValid = !!formData.type;
+        errorMessage = "Please select your preference";
+        break;
       default:
-        return false;
+        errorMessage = "Please select an option";
     }
+
+    if (!isValid) {
+      setErrors(errorMessage);
+    }
+
+    return isValid;
   };
 
   const handleNext = () => {
     if (validateStep()) {
-      if (currentStep < 4) {
+      if (currentStep < 5) {
         setCurrentStep(currentStep + 1);
       } else {
         onComplete(formData);
@@ -86,12 +79,24 @@ export default function RegistrationForm({ onComplete }: RegistrationFormProps) 
     setErrors("");
   };
 
+  const renderError = () => {
+    if (errors) {
+      return (
+        <div className="error-message">
+          {errors}
+        </div>
+      );
+    }
+    return null;
+  };
+
   const renderStep = () => {
     switch (currentStep) {
       case 1:
         return (
           <div className="step-container">
             <h1 className="step-question">Who are you?</h1>
+            {renderError()}
             <div className="radio-group">
               <label className="radio-option">
                 <input
@@ -124,6 +129,7 @@ export default function RegistrationForm({ onComplete }: RegistrationFormProps) 
         return (
           <div className="step-container">
             <h1 className="step-question">I&apos;m Looking To Meet :</h1>
+            {renderError()}
             <div className="radio-group">
               <label className="radio-option">
                 <input
@@ -155,52 +161,116 @@ export default function RegistrationForm({ onComplete }: RegistrationFormProps) 
       case 3:
         return (
           <div className="step-container">
-            <h1 className="step-question">where should we look?</h1>
-            <input
-              type="text"
-              placeholder="Enter your zipcode"
-              value={formData.zipcode}
-              onChange={(e) => updateFormData("zipcode", e.target.value)}
-              className="step-input"
-            />
-            {errors && <p className="error-message">{errors}</p>}
+            <h1 className="step-question">How old do you like your partner?</h1>
+            {renderError()}
+            <div className="radio-group">
+              <label className="radio-option">
+                <input
+                  type="checkbox"
+                  name="age"
+                  value="18-30"
+                  checked={formData.age === "18-30"}
+                  onChange={(e) => updateFormData("age", e.target.value)}
+                />
+                <span className="radio-label">18 - 30</span>
+              </label>
+              <label className="radio-option">
+                <input
+                  type="checkbox"
+                  name="age"
+                  value="31-45"
+                  checked={formData.age === "31-45"}
+                  onChange={(e) => updateFormData("age", e.target.value)}
+                />
+                <span className="radio-label">31 - 45</span>
+              </label>
+              <label className="radio-option">
+                <input
+                  type="checkbox"
+                  name="age"
+                  value="46-55+"
+                  checked={formData.age === "46-55+"}
+                  onChange={(e) => updateFormData("age", e.target.value)}
+                />
+                <span className="radio-label">46 - 55+</span>
+              </label>
+            </div>
             <button onClick={handleNext} className="step-button">
               Almost There!
             </button>
           </div>
         );
 
-      // case 4:
-      //   return (
-      //     <div className="step-container">
-      //       <h1 className="step-question">What will your password be?</h1>
-      //       <input
-      //         type="password"
-      //         placeholder="6-12 characters"
-      //         value={formData.password}
-      //         onChange={(e) => updateFormData("password", e.target.value)}
-      //         className="step-input"
-      //         maxLength={12}
-      //       />
-      //       {errors && <p className="error-message">{errors}</p>}
-      //       <button onClick={handleNext} className="step-button">
-      //         To The Last Question
-      //       </button>
-      //     </div>
-      //   );
-
       case 4:
         return (
           <div className="step-container">
-            <h1 className="step-question">We found 20+ profiles near you that match your criteria. Unlock them now.</h1>
-            <input
-              type="email"
-              placeholder="your@email.com"
-              value={formData.email}
-              onChange={(e) => updateFormData("email", e.target.value)}
-              className="step-input"
-            />
-            {errors && <p className="error-message">{errors}</p>}
+            <h1 className="step-question">What type of connection are you seeking?</h1>
+            {renderError()}
+            <div className="radio-group">
+              <label className="radio-option">
+                <input
+                  type="checkbox"
+                  name="connect"
+                  value="onenightstand"
+                  checked={formData.connect === "onenightstand"}
+                  onChange={(e) => updateFormData("connect", e.target.value)}
+                />
+                <span className="radio-label">One Night Stand</span>
+              </label>
+              <label className="radio-option">
+                <input
+                  type="checkbox"
+                  name="connect"
+                  value="dating"
+                  checked={formData.connect === "dating"}
+                  onChange={(e) => updateFormData("connect", e.target.value)}
+                />
+                <span className="radio-label">Dating</span>
+              </label>
+            </div>
+            <button onClick={handleNext} className="step-button">
+              To The Last Question
+            </button>
+          </div>
+        );
+
+      case 5:
+        return (
+          <div className="step-container">
+            <h1 className="step-question">What type of body do you prefer?</h1>
+            {renderError()}
+            <div className="radio-group">
+              <label className="radio-option">
+                <input
+                  type="checkbox"
+                  name="type"
+                  value="Skinny"
+                  checked={formData.type === "Skinny"}
+                  onChange={(e) => updateFormData("type", e.target.value)}
+                />
+                <span className="radio-label">Skinny</span>
+              </label>
+              <label className="radio-option">
+                <input
+                  type="checkbox"
+                  name="type"
+                  value="Regular"
+                  checked={formData.type === "Regular"}
+                  onChange={(e) => updateFormData("type", e.target.value)}
+                />
+                <span className="radio-label">Regular</span>
+              </label>
+              <label className="radio-option">
+                <input
+                  type="checkbox"
+                  name="type"
+                  value="BBW"
+                  checked={formData.type === "BBW"}
+                  onChange={(e) => updateFormData("type", e.target.value)}
+                />
+                <span className="radio-label">BBW</span>
+              </label>
+            </div>
             <button onClick={handleNext} className="step-button">
               Go Get Laid!
             </button>
@@ -215,9 +285,9 @@ export default function RegistrationForm({ onComplete }: RegistrationFormProps) 
   return (
     <div className="registration-form">
       <div className="progress-bar">
-        <div className="progress-fill" style={{ width: `${(currentStep / 4) * 100}%` }} />
+        <div className="progress-fill" style={{ width: `${(currentStep / 5) * 100}%` }} />
       </div>
-      <div className="step-indicator">Step {currentStep} of 4</div>
+      <div className="step-indicator">Step {currentStep} of 5</div>
       {renderStep()}
 
       <style jsx global>{`
