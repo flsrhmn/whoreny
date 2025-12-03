@@ -14,7 +14,7 @@ function EscortSideContent() {
   const searchParams = useSearchParams();
   const bannerLoadedRef = useRef(false);
 
-  const [currentContent] = useState({
+  const [currentContent, setCurrentContent] = useState({
     tagline: "The Alternative to Escorts.",
     description: "We are not whores - Just Horny",
     buttonText: " FREE SIGNUP",
@@ -51,24 +51,30 @@ function EscortSideContent() {
   // Rest of your existing code remains the same...
   // Check if device is mobile and set appropriate background
   useEffect(() => {
-    const checkIfMobile = () => {
-      const mobile = window.innerWidth < 768;
-      setIsMobile(mobile);
+  const checkIfMobile = () => {
+    const mobile = window.innerWidth < 768;
+    setIsMobile(mobile);
 
-      // Generate random number between 1 and 50
-      const randomImageNumber = Math.floor(Math.random() * 33) + 1;
+    // Generate random number between 1 and 33
+    const randomImageNumber = Math.floor(Math.random() * 33) + 1;
 
-      if (mobile) {
-        setBackgroundImage(`/escort/mob/img${randomImageNumber}.jpg`);
-      } else {
-        setBackgroundImage(`/escort/desk/img${randomImageNumber}.jpg`);
-      }
-    };
+    // Update the currentContent with the new image number
+    setCurrentContent(prev => ({
+      ...prev,
+      imageNumber: randomImageNumber
+    }));
 
-    checkIfMobile();
-    window.addEventListener("resize", checkIfMobile);
-    return () => window.removeEventListener("resize", checkIfMobile);
-  }, []);
+    if (mobile) {
+      setBackgroundImage(`/escort/mob/img${randomImageNumber}.jpg`);
+    } else {
+      setBackgroundImage(`/escort/desk/img${randomImageNumber}.jpg`);
+    }
+  };
+
+  checkIfMobile();
+  window.addEventListener("resize", checkIfMobile);
+  return () => window.removeEventListener("resize", checkIfMobile);
+}, []);
 
   // Idle redirect after 30 seconds
   useEffect(() => {
