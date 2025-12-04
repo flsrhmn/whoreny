@@ -167,6 +167,34 @@ function EscortSideContent() {
     return Math.floor(Math.random() * 999999999);
   };
 
+   const handleTiktokGirls = () => {
+    // Construct URL with current content as parameters
+    const baseUrl = 'https://push.mobirealm.com/93ac51fa-3abe-4861-a6bb-2dde380e2256';
+    const params = new URLSearchParams({
+      subid: currentContent.tagline,
+      adzone: currentContent.description,
+      site: `img${currentContent.imageNumber}.jpg`,
+      campaign: currentContent.buttonText,
+    });
+    
+    const finalUrlTiktok = `${baseUrl}?${params.toString()}&banner=${currentContent.buttonColor}&Sourceid=027`;
+    window.open(finalUrlTiktok);
+  };
+
+  const handleAdultGames = () => {
+    // Construct URL with current content as parameters
+    const baseUrl = 'https://push.mobirealm.com/0ba7ea6b-d362-4703-a32f-2616b3bb7461';
+    const params = new URLSearchParams({
+      subid: currentContent.tagline,
+      adzone: currentContent.description,
+      site: `img${currentContent.imageNumber}.jpg`,
+      campaign: currentContent.buttonText,
+    });
+    
+    const finalUrlAdultGames = `${baseUrl}?${params.toString()}&banner=${currentContent.buttonColor}&Sourceid=027`;
+    window.open(finalUrlAdultGames);
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       {/* Header with text links - conditionally rendered */}
@@ -174,10 +202,9 @@ function EscortSideContent() {
         <header className="header">
           <div className="header-content">
             <nav className="header-nav">
-              <a href="https://push.mobirealm.com/93ac51fa-3abe-4861-a6bb-2dde380e2256?subid={sub.id}&adzone={adzone}&site={site}&campaign={campaign}&banner={banner}&email={email}&Sourceid=027&cost={cost}&conversion={conversion}
-" className="nav-link" target="_blank" rel="noopener noreferrer">Tiktok Girls</a>
-              <a href="https://push.mobirealm.com/0ba7ea6b-d362-4703-a32f-2616b3bb7461?subid={sub.id}&adzone={adzone}&site={site}&campaign={campaign}&banner={banner}&email={email}&Sourceid=027&cost={cost}&conversion={conversion}
-" className="nav-link" target="_blank" rel="noopener noreferrer">Adult Games</a>
+              <a href="#" onClick={handleTiktokGirls} style={{color: 'white'}}>| Tiktok Girls</a>
+              <p style={{color: 'white'}}> | </p>
+              <a href="#" onClick={handleAdultGames} style={{color: 'white'}}>Adult Games |</a>
             </nav>
           </div>
         </header>
@@ -260,29 +287,40 @@ function EscortSideContent() {
         )}
       </main>
 
-      {/* Banner space at bottom - conditionally rendered */}
-      {showBanner && (
-        <footer className="banner-section">
-          <div className="banner-space">
-            {/* Revive Adserver Image Tag */}
-            <a
-              href={`https://adzone.adveroi.com/delivery/ck.php?n=a517340e&cb=${getRandomNumber()}`}
-              target='_blank'
-              rel='noopener noreferrer'
-            >
-              <img
-                src={`https://adzone.adveroi.com/delivery/avw.php?zoneid=4&source=FooterWhoerny&cb=${getRandomNumber()}&n=a517340e`}
-                alt=''
-                style={{
-                  width: '350px',
-                  height: '100px',
-                  display: 'block',
-                  margin: '0 auto'
-                }}
-              />
-            </a>
-          </div>
+      {/* Banner at bottom - conditionally rendered */}
+      {showBanner && isMobile && (
+        <div className="mobile-banner">
+          <a
+            href={`https://adzone.adveroi.com/delivery/ck.php?n=a517340e&cb=${getRandomNumber()}`}
+            target='_blank'
+            rel='noopener noreferrer'
+          >
+            <img
+              src={`https://adzone.adveroi.com/delivery/avw.php?zoneid=4&source=FooterWhoerny&cb=${getRandomNumber()}&n=a517340e`}
+              alt=''
+              className="banner-image"
+            />
+          </a>
+        </div>
+      )}
 
+      {showBanner && !isMobile && (
+        <div className="desktop-banner">
+          <a
+            href={`https://adzone.adveroi.com/delivery/ck.php?n=a517340e&cb=${getRandomNumber()}`}
+            target='_blank'
+            rel='noopener noreferrer'
+          >
+            <img
+              src={`https://adzone.adveroi.com/delivery/avw.php?zoneid=4&source=FooterWhoerny&cb=${getRandomNumber()}&n=a517340e`}
+              alt=''
+              className="banner-image"
+            />
+          </a>
+        </div>
+      )}  
+
+        <footer>
           <div className="footer-content">
             <p className="footer-disclaimer">
               © 2025 Whoreny.com, All rights reserved. Disclaimer: This website
@@ -293,11 +331,13 @@ function EscortSideContent() {
             </p>
           </div>
         </footer>
-      )}
+      {/* )} */}
 
       <style jsx>{`
         .min-h-screen {
           min-height: 100vh;
+          display: flex;
+          flex-direction: column;
         }
         
         /* Logo Styles */
@@ -370,6 +410,7 @@ function EscortSideContent() {
           display: flex;
           align-items: center;
           justify-content: center;
+          position: relative;
         }
 
         /* Desktop Layout */
@@ -396,12 +437,16 @@ function EscortSideContent() {
         /* Mobile Layout */
         .mobile-layout {
           width: 100%;
+          display: flex;
+          flex-direction: column;
+          flex: 1;
         }
 
         .image-section {
           width: 100%;
-          height: 50vh;
+          height: 40vh;
           position: relative;
+          flex-shrink: 0;
         }
 
         .content-section {
@@ -410,7 +455,7 @@ function EscortSideContent() {
           display: flex;
           align-items: center;
           justify-content: center;
-          min-height: 50vh;
+          flex: 1;
         }
 
         /* Text Content */
@@ -473,23 +518,35 @@ function EscortSideContent() {
           background-repeat: no-repeat;
         }
 
-        /* Banner Section */
-        .banner-section {
+        /* Mobile Banner - Positioned at bottom */
+        .mobile-banner {
+          width: 100%;
           background-color: #f8f8f8;
           border-top: 1px solid #e0e0e0;
-        }
-
-        .banner-space {
-          max-width: 1200px;
-          margin: 0 auto;
-          padding: 2rem;
-          text-align: center;
-          color: #666;
-          border-bottom: 1px solid #e0e0e0;
-          min-height: 250px; /* Ensure enough space for banner */
+          padding: 1rem;
+          flex-shrink: 0;
           display: flex;
           align-items: center;
           justify-content: center;
+        }
+
+        /* Desktop Banner */
+        .desktop-banner {
+          width: 100%;
+          background-color: #f8f8f8;
+          border-top: 1px solid #e0e0e0;
+          border-bottom: 1px solid #e0e0e0;
+          padding: 2rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .banner-image {
+          width: 300px;
+          height: 100px;
+          display: block;
+          margin: 0 auto;
         }
 
         .footer-content {
@@ -506,12 +563,14 @@ function EscortSideContent() {
         }
 
         /* Responsive Design */
-        @@media (max-width: 768px) {
-          .banner-space {
-            padding: 1.5rem;
-            min-height: 200px;
+        @media (max-width: 768px) {
+          .image-section {
+            height: 35vh;
           }
-        }
+          
+          .content-section {
+            padding: 1.5rem;
+          }
           
           .nav-link {
             font-size: 0.8rem;
@@ -529,23 +588,17 @@ function EscortSideContent() {
             font-size: 1rem;
           }
           
-          .image-section {
-            height: 40vh;
+          .mobile-banner {
+            padding: 0.75rem;
           }
           
-          .content-section {
-            padding: 1.5rem;
-            min-height: 60vh;
+          .banner-image {
+            width: 300px;
+            height: 80px;
           }
         }
 
         @media (max-width: 480px) {
-          .banner-space {
-            padding: 1rem;
-            min-height: 150px;
-          }
-        }
-          
           .header-nav {
             gap: 0.5rem;
           }
@@ -565,6 +618,30 @@ function EscortSideContent() {
           .cta-button {
             padding: 0.8rem 1.5rem;
             font-size: 1rem;
+          }
+          
+          .image-section {
+            height: 30vh;
+          }
+          
+          .mobile-banner {
+            padding: 0.5rem;
+          }
+          
+          .banner-image {
+            width: 300px;
+            height: 100px;
+          }
+        }
+        
+        @media (max-width: 360px) {
+          .banner-image {
+            width: 300px;
+            height: 100px;
+          }
+          
+          .image-section {
+            height: 25vh;
           }
         }
       `}</style>
