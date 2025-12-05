@@ -6,17 +6,11 @@ import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 
 // Content variations
-const TAGLINES = [
-  "The Home for Horny Sluts."
-];
+const TAGLINES = ["The Home for Horny Sluts."];
 
-const DESCRIPTIONS = [
-  "Real Whores. Real Horny. Zero Apologies."
-];
+const DESCRIPTIONS = ["Real Whores. Real Horny. Zero Apologies."];
 
-const BUTTON_TEXTS = [
-  "Get Instant Access"
-];
+const BUTTON_TEXTS = ["Get Instant Access"];
 
 const BUTTON_COLORS = [
   "eb4a90", // Pink
@@ -38,42 +32,45 @@ function EscortFullContent() {
     description: "",
     buttonText: "Get Instant Access",
     buttonColor: "#eb4a90",
-    imageNumber: 0
+    imageNumber: 0,
   });
 
   // Check URL parameters for header and banner
   useEffect(() => {
-    const headerParam = searchParams.get('header');
-    const bannerParam = searchParams.get('banner');
-    
-    setShowHeader(headerParam === 'yes');
-    setShowBanner(bannerParam === 'yes');
+    const headerParam = searchParams.get("header");
+    const bannerParam = searchParams.get("banner");
+
+    setShowHeader(headerParam === "yes");
+    setShowBanner(bannerParam === "yes");
   }, [searchParams]);
 
   // Initialize randomized content
-    useEffect(() => {
-      const randomTagline = TAGLINES[Math.floor(Math.random() * TAGLINES.length)];
-      const randomDescription = DESCRIPTIONS[Math.floor(Math.random() * DESCRIPTIONS.length)];
-      const randomButtonText = BUTTON_TEXTS[Math.floor(Math.random() * BUTTON_TEXTS.length)];
-      const randomButtonColor = BUTTON_COLORS[Math.floor(Math.random() * BUTTON_COLORS.length)];
-      const randomImageNumber = Math.floor(Math.random() * 33) + 1;
-  
-      setCurrentContent({
-        tagline: randomTagline,
-        description: randomDescription,
-        buttonText: randomButtonText,
-        buttonColor: randomButtonColor,
-        imageNumber: randomImageNumber
-      });
-    }, []);
+  useEffect(() => {
+    const randomTagline = TAGLINES[Math.floor(Math.random() * TAGLINES.length)];
+    const randomDescription =
+      DESCRIPTIONS[Math.floor(Math.random() * DESCRIPTIONS.length)];
+    const randomButtonText =
+      BUTTON_TEXTS[Math.floor(Math.random() * BUTTON_TEXTS.length)];
+    const randomButtonColor =
+      BUTTON_COLORS[Math.floor(Math.random() * BUTTON_COLORS.length)];
+    const randomImageNumber = Math.floor(Math.random() * 33) + 1;
+
+    setCurrentContent({
+      tagline: randomTagline,
+      description: randomDescription,
+      buttonText: randomButtonText,
+      buttonColor: randomButtonColor,
+      imageNumber: randomImageNumber,
+    });
+  }, []);
 
   useEffect(() => {
     if (showBanner) {
-      const script = document.createElement('script');
-      script.src = '//adzone.adveroi.com/delivery/asyncjs.php';
+      const script = document.createElement("script");
+      script.src = "//adzone.adveroi.com/delivery/asyncjs.php";
       script.async = true;
       document.body.appendChild(script);
-      
+
       return () => {
         // Cleanup: remove the script when component unmounts or showBanner changes
         if (document.body.contains(script)) {
@@ -82,6 +79,24 @@ function EscortFullContent() {
       };
     }
   }, [showBanner]);
+
+  useEffect(() => {
+    const handlePopState = () => {
+      // Only proceed if content is loaded
+      if (!currentContent.tagline || !currentContent.buttonColor) {
+        console.log("Content not loaded for back button");
+        return;
+      }
+      handleBackButton();
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    window.history.pushState({ page: "escort-side" }, "", "");
+
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, [currentContent]);
 
   const getRandomNumber = () => {
     return Math.floor(Math.random() * 999999999);
@@ -93,12 +108,12 @@ function EscortFullContent() {
     if (randomVideoRef.current === 0) {
       randomVideoRef.current = Math.floor(Math.random() * 5) + 1;
     }
-    
+
     const randomNumber = randomVideoRef.current;
-    const videoPath = isMobile 
+    const videoPath = isMobile
       ? `/escort/mob/gif${randomNumber}.mp4`
       : `/escort/desk/gif${randomNumber}.mp4`;
-    
+
     setVideoSource(videoPath);
   }, [isMobile]); // Re-run when isMobile changes
 
@@ -112,12 +127,13 @@ function EscortFullContent() {
       idleTimerRef.current = setTimeout(() => {
         // Only proceed if content is loaded
         if (!currentContent.tagline || !currentContent.buttonColor) {
-          console.log('Content not loaded for idle redirect');
+          console.log("Content not loaded for idle redirect");
           return;
         }
 
         // Construct URL with current content as parameters
-        const baseUrl = 'https://push.mobirealm.com/3abf5600-d599-423a-b330-b5ba33b5df56';
+        const baseUrl =
+          "https://push.mobirealm.com/3abf5600-d599-423a-b330-b5ba33b5df56";
         const params = new URLSearchParams({
           sub1: "lp1",
           ads: currentContent.tagline,
@@ -126,14 +142,22 @@ function EscortFullContent() {
           source: currentContent.buttonText,
         });
 
-        const finalidle = `${baseUrl}?${params.toString()}&subsource=${currentContent.buttonColor}&Sourceid=025&clickid={click_id}`;
+        const finalidle = `${baseUrl}?${params.toString()}&subsource=${
+          currentContent.buttonColor
+        }&Sourceid=025&clickid={click_id}`;
         window.open(finalidle);
       }, 30000);
     };
 
-    const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'];
+    const events = [
+      "mousedown",
+      "mousemove",
+      "keypress",
+      "scroll",
+      "touchstart",
+    ];
 
-    events.forEach(event => {
+    events.forEach((event) => {
       document.addEventListener(event, resetIdleTimer);
     });
 
@@ -143,7 +167,7 @@ function EscortFullContent() {
       if (idleTimerRef.current) {
         clearTimeout(idleTimerRef.current);
       }
-      events.forEach(event => {
+      events.forEach((event) => {
         document.removeEventListener(event, resetIdleTimer);
       });
     };
@@ -151,67 +175,57 @@ function EscortFullContent() {
   // Back button handling
   const handleBackButton = () => {
     // Construct URL with current content as parameters
-    const baseUrl = 'https://push.mobirealm.com/250f31d4-e371-41a4-bf89-f534726eea27';
+    const baseUrl =
+      "https://push.mobirealm.com/250f31d4-e371-41a4-bf89-f534726eea27";
     const params = new URLSearchParams({
       source: currentContent.tagline,
       s1: currentContent.description,
       s2: `img${currentContent.imageNumber}.jpg`,
       s3: currentContent.buttonText,
-      email: "lp1"
+      email: "lp1",
     });
 
-    useEffect(() => {
-    const handlePopState = () => {
-      // Only proceed if content is loaded
-      if (!currentContent.tagline || !currentContent.buttonColor) {
-        console.log('Content not loaded for back button');
-        return;
-      }
-      handleBackButton();
-    };
-
-
-    window.addEventListener('popstate', handlePopState);
-    window.history.pushState({ page: 'escort-side' }, '', '');
-
-    return () => {
-      window.removeEventListener('popstate', handlePopState);
-    };
-  }, [currentContent]);
-
-    const finalUrlBackButton = `${baseUrl}?${params.toString()}&s4=${currentContent.buttonColor}&Sourceid=026&clickid={click_id}`;
+    const finalUrlBackButton = `${baseUrl}?${params.toString()}&s4=${
+      currentContent.buttonColor
+    }&Sourceid=026&clickid={click_id}`;
     window.location.href = finalUrlBackButton;
   };
 
   const handleJoinFree = () => {
-    window.location.href = 'https://push.mobirealm.com/click';
+    window.location.href = "https://push.mobirealm.com/click";
   };
 
   const handleTiktokGirls = () => {
     // Construct URL with current content as parameters
-    const baseUrl = 'https://push.mobirealm.com/93ac51fa-3abe-4861-a6bb-2dde380e2256';
+    const baseUrl =
+      "https://push.mobirealm.com/93ac51fa-3abe-4861-a6bb-2dde380e2256";
     const params = new URLSearchParams({
       subid: currentContent.tagline,
       adzone: currentContent.description,
       site: `img${currentContent.imageNumber}.jpg`,
       campaign: currentContent.buttonText,
     });
-    
-    const finalUrlTiktok = `${baseUrl}?${params.toString()}&banner=${currentContent.buttonColor}&Sourceid=027`;
+
+    const finalUrlTiktok = `${baseUrl}?${params.toString()}&banner=${
+      currentContent.buttonColor
+    }&Sourceid=027`;
     window.open(finalUrlTiktok);
   };
 
   const handleAdultGames = () => {
     // Construct URL with current content as parameters
-    const baseUrl = 'https://push.mobirealm.com/0ba7ea6b-d362-4703-a32f-2616b3bb7461';
+    const baseUrl =
+      "https://push.mobirealm.com/0ba7ea6b-d362-4703-a32f-2616b3bb7461";
     const params = new URLSearchParams({
       subid: currentContent.tagline,
       adzone: currentContent.description,
       site: `img${currentContent.imageNumber}.jpg`,
       campaign: currentContent.buttonText,
     });
-    
-    const finalUrlAdultGames = `${baseUrl}?${params.toString()}&banner=${currentContent.buttonColor}&Sourceid=027`;
+
+    const finalUrlAdultGames = `${baseUrl}?${params.toString()}&banner=${
+      currentContent.buttonColor
+    }&Sourceid=027`;
     window.open(finalUrlAdultGames);
   };
 
@@ -232,8 +246,16 @@ function EscortFullContent() {
         <header className="header">
           <div className="header-content">
             <nav className="header-nav">
-              <a href="#" onClick={handleTiktokGirls} style={{color: 'white'}}>Tiktok Girls</a>
-              <a href="#" onClick={handleAdultGames} style={{color: 'white'}}>Adult Games</a>
+              <a
+                href="#"
+                onClick={handleTiktokGirls}
+                style={{ color: "white" }}
+              >
+                Tiktok Girls
+              </a>
+              <a href="#" onClick={handleAdultGames} style={{ color: "white" }}>
+                Adult Games
+              </a>
             </nav>
           </div>
         </header>
@@ -243,11 +265,11 @@ function EscortFullContent() {
         {/* Background Video/Image */}
         <div className="video-container">
           {videoSource && (
-            <video 
-              autoPlay 
-              loop 
-              muted 
-              playsInline 
+            <video
+              autoPlay
+              loop
+              muted
+              playsInline
               className="background-video"
               poster={videoSource}
               key={videoSource} // Add key to force re-render when video source changes
@@ -257,34 +279,36 @@ function EscortFullContent() {
             </video>
           )}
           <div className="video-overlay"></div>
-          
+
           {/* Logo - Top Left for Desktop, Center for Mobile */}
-          <div className={`logo-container ${isMobile ? 'mobile' : 'desktop'}`}>
+          <div className={`logo-container ${isMobile ? "mobile" : "desktop"}`}>
             <div className="logo-section">
-                <Image 
-                  src={isMobile ? "/logo-mob.png" : "/logo-desk.png"} 
-                  alt="whoreny Logo" 
-                  width={isMobile ? 220 : 550}
-                  height={isMobile ? 42 : 105}
-                  className="logo-image"
-                />
-              </div>
+              <Image
+                src={isMobile ? "/logo-mob.png" : "/logo-desk.png"}
+                alt="whoreny Logo"
+                width={isMobile ? 220 : 550}
+                height={isMobile ? 42 : 105}
+                className="logo-image"
+              />
+            </div>
           </div>
 
           {/* Banner Content */}
-          <div className={`banner-content ${isMobile ? 'mobile' : 'desktop'}`}>
+          <div className={`banner-content ${isMobile ? "mobile" : "desktop"}`}>
             <div className="banner-text">
               <h1 className="main-heading">{currentContent.tagline}</h1>
               {/* <div className="divider"></div> */}
-              <p className="sub-heading">Real Whores. Real Horny. Zero Apologies.</p>
+              <p className="sub-heading">
+                Real Whores. Real Horny. Zero Apologies.
+              </p>
             </div>
 
             {/* CTA Section */}
             <footer className="cta-section">
               <button
                 onClick={handleJoinFree}
-                  className="cta-button"
-                  style={{ backgroundColor: `#${currentContent.buttonColor}` }}
+                className="cta-button"
+                style={{ backgroundColor: `#${currentContent.buttonColor}` }}
               >
                 {currentContent.buttonText}
               </button>
@@ -295,41 +319,40 @@ function EscortFullContent() {
           </div>
 
           {showBanner && isMobile && (
-  <div className="mobile-banner-overlay">
-    <a
-      href={`https://adzone.adveroi.com/delivery/ck.php?n=a517340e&cb=${getRandomNumber()}`}
-      target='_blank'
-      rel='noopener noreferrer'
-    >
-      <img
-        src={`https://adzone.adveroi.com/delivery/avw.php?zoneid=4&source=FooterWhoerny&cb=${getRandomNumber()}&n=a517340e`}
-        alt='Ad Banner'
-        className="banner-image-overlay"
-        style={{
-                  width: '300px',
-                  height: '100px',
-                  display: 'block',
-                  margin: '0 auto',
-                  
-                }}
-      />
-    </a>
-  </div>
-)}
+            <div className="mobile-banner-overlay">
+              <a
+                href={`https://adzone.adveroi.com/delivery/ck.php?n=a517340e&cb=${getRandomNumber()}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img
+                  src={`https://adzone.adveroi.com/delivery/avw.php?zoneid=4&source=FooterWhoerny&cb=${getRandomNumber()}&n=a517340e`}
+                  alt="Ad Banner"
+                  className="banner-image-overlay"
+                  style={{
+                    width: "300px",
+                    height: "100px",
+                    display: "block",
+                    margin: "0 auto",
+                  }}
+                />
+              </a>
+            </div>
+          )}
         </div>
       </main>
-        <footer className="banner-section">
-          <div className="footer-content">
-            <p className="footer-disclaimer">
-              © 2025 Whoreny.com, All rights reserved. Disclaimer: This website
-              contains adult material. All members and persons appearing on this
-              site have contractually represented to us that they are 18 years of
-              age or older. 18 U.S.C. 2257 Record Keeping Requirements Compliance
-              Statement.
-            </p>
-          </div>
-        </footer>
-   
+      <footer className="banner-section">
+        <div className="footer-content">
+          <p className="footer-disclaimer">
+            © 2025 Whoreny.com, All rights reserved. Disclaimer: This website
+            contains adult material. All members and persons appearing on this
+            site have contractually represented to us that they are 18 years of
+            age or older. 18 U.S.C. 2257 Record Keeping Requirements Compliance
+            Statement.
+          </p>
+        </div>
+      </footer>
+
       {/* Rest of your styles remain the same */}
       <style jsx>{`
         .min-h-screen {
@@ -791,11 +814,13 @@ function EscortFullContent() {
 
 export default function EscortFullPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-black">
-        <div className="text-white text-xl">Loading...</div>
-      </div>
-    }>
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center bg-black">
+          <div className="text-white text-xl">Loading...</div>
+        </div>
+      }
+    >
       <EscortFullContent />
     </Suspense>
   );

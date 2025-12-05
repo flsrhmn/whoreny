@@ -96,8 +96,8 @@ function EscortSideContent() {
     };
 
     // Handle registration completion
-    const handleRegistrationComplete = (data: any) => {
-        console.log('Registration completed:', data);
+    const handleRegistrationComplete = () => {
+        console.log('Registration completed:');
     };
 
     // Initialize randomized content
@@ -334,7 +334,7 @@ function EscortSideContent() {
                                 </div>
 
                                 {showRegistration ? (
-                                    <Simple5Step onComplete={handleRegistrationComplete} />
+                                    <Simple5Step onComplete={() => handleRegistrationComplete()} />
                                 ) : (
                                     <>
                                         <h2 className="tagline">{currentContent.tagline}</h2>
@@ -368,7 +368,7 @@ function EscortSideContent() {
                                 </div>
 
                                 {showRegistration ? (
-                                    <Simple5Step onComplete={handleRegistrationComplete} />
+                                    <Simple5Step onComplete={() => handleRegistrationComplete()} />
                                 ) : (
                                     <>
                                         <h2 className="tagline">{currentContent.tagline}</h2>
